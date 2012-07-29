@@ -1,0 +1,13 @@
+setup webgl/project
+render box
+render texture
+implement camera (including fullscreen/relative movement)
+render a single chunk
+
+octree for chunks
+and later npcs?
+frustum culling octree
+
+ray queries
+remove blocks
+add blocks
