@@ -145,6 +145,7 @@ glUtils.getContext = function (canvas, context_options, options) {
     }
 
     gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.CULL_FACE);
 
     gl.lost = false;
     canvas.addEventListener('webglcontextlost', function () {

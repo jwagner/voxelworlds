@@ -51,7 +51,7 @@ clock.ontick = function (td) {
 };
 
 if(glUtils.getContext(canvas, {}, {}) == null){
-    return;
+    //return;
 }
 
 loader.onready = function() {
