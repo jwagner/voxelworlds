@@ -1,4 +1,5 @@
 {
+    "namespace": "x29a",
     "mode": "debug",
     "src": "./src",
     "build": "./build",

@@ -11,11 +11,11 @@ requires_re = re.compile(r"""requires\(['"]{1}([^'"]+)['"]{1}\)""")
 provides_re = re.compile(r"""provides\(['"]{1}([^'"]+)['"]{1}\)""")
 
 libstub = """
-window.namespace = {};
+window.__namespace__ = {};
 function provides(namespace) {
     var parts = namespace.split('.'),
         part,
-        current = window.namespace;
+        current = window.__namespace__;
     while(part = parts.shift(0)){
         if(!(part in current)){
             current[part] = {};
@@ -42,6 +42,7 @@ def publish_debug(config, filename):
 
 def prepareconfig(config):
     base = {
+            "namespace": "__namespace__",
             "mode": "debug",
             "src": "src",
             "build": "build",
@@ -99,7 +100,8 @@ def gather_requirements(entrypoint, provides, requires):
 
 def build_debug_browser(config, order, entrypoint):
     with open(os.path.join(config["build"], entrypoint + ".js"), "w") as f:
-        f.write(libstub)
+        stub = libstub.replace("__namespace__", config["namespace"])
+        f.write(stub)
         for name in order:
             url = publish_debug(config, name)
             f.write("document.write('<script src=\"%s\" "
