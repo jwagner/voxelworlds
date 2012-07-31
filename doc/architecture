@@ -1,0 +1,32 @@
+voxel
+
+World
+    width
+    height
+    depth
+    chunks[]
+    // Contains chunks
+    getVoxel(position)
+    getChunk(position)
+
+Chunk
+    width
+    height
+    depth
+    // bottom, back, left
+    position
+    key
+    // worldspace
+    bounding_box
+    voxels[]
+
+gl.voxel
+
+MeshGenerator
+    // palette
+    // returns Float32Array for VBO in WORLD SPACE
+    getMesh(chunk)
+
+WorldRenderer(World, Camera)
+    meshes[key] // LRU cache
+    render(graph)

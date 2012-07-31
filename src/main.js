@@ -15,6 +15,8 @@ var Loader = requires('loader').Loader,
     scene = requires('gl.scene'),
     mesh = requires('gl.mesh'),
     glutils = requires('gl.utils'),
+    glvoxel = requires('gl.voxel'),
+    voxel = requires('voxel'),
     ShaderManager = requires('gl.shader').Manager;
 
 var RESOURCES = [
@@ -42,6 +44,7 @@ function prepareScene(){
     gl.clearColor(0.5, 0.6, 0.8, 1.0);
     graph.viewportWidth = canvas.width;
     graph.viewportHeight = canvas.height;
+    window.world = new voxel.World({width: 1, height: 1, depth: 1});
     return;
 }
 
