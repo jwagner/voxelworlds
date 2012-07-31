@@ -2,24 +2,8 @@
     
 var voxel = provides('gl.voxel'),
     extend = requires('utils').extend,
-    glUtils = requires('gl.utils'),
+    glutils = requires('gl.utils'),
     scene = requires('gl.scene');
-
-voxel.Renderer = function(world) {
-    this.world = world;
-    this.buffers = {};
-};
-voxel.Renderer.prototype = {
-    visit: function(graph) {
-        for(var i = 0; i < this.world.chunks.length; i++) {
-            var chunk = this.world.chunks[i];
-            if(!this.buffers[chunk.key]){
-                this.buffers[chunk.key] = generate_mesh(chunk);
-            }
-            // render chunk
-        }
-    }
-};
 
 function generate_mesh(chunk){
     var vertices = [],
@@ -40,9 +24,9 @@ function generate_mesh(chunk){
 
                 if(!voxel) continue;
                 // top
-                vertices.push(ox+scale);
+                vertices.push(ox);
                 vertices.push(oy+scale);
-                vertices.push(oz+scale);
+                vertices.push(oz);
                 vertices.push(0);
                 vertices.push(1);
                 vertices.push(0);
@@ -50,6 +34,20 @@ function generate_mesh(chunk){
                 vertices.push(ox);
                 vertices.push(oy+scale);
                 vertices.push(oz+scale);
+                vertices.push(0);
+                vertices.push(1);
+                vertices.push(0);
+
+                vertices.push(ox+scale);
+                vertices.push(oy+scale);
+                vertices.push(oz+scale);
+                vertices.push(0);
+                vertices.push(1);
+                vertices.push(0);
+
+                vertices.push(ox+scale);
+                vertices.push(oy+scale);
+                vertices.push(oz);
                 vertices.push(0);
                 vertices.push(1);
                 vertices.push(0);
@@ -61,7 +59,61 @@ function generate_mesh(chunk){
                 vertices.push(1);
                 vertices.push(0);
 
+                vertices.push(ox+scale);
+                vertices.push(oy+scale);
+                vertices.push(oz+scale);
+                vertices.push(0);
+                vertices.push(1);
+                vertices.push(0);
+
+
                 // bottom
+                vertices.push(ox+scale);
+                vertices.push(oy);
+                vertices.push(oz+scale);
+                vertices.push(0);
+                vertices.push(-1);
+                vertices.push(0);
+
+                vertices.push(ox);
+                vertices.push(oy);
+                vertices.push(oz+scale);
+                vertices.push(0);
+                vertices.push(-1);
+                vertices.push(0);
+
+                vertices.push(ox);
+                vertices.push(oy);
+                vertices.push(oz);
+                vertices.push(0);
+                vertices.push(-1);
+                vertices.push(0);
+
+
+
+                vertices.push(ox+scale);
+                vertices.push(oy);
+                vertices.push(oz);
+                vertices.push(0);
+                vertices.push(-1);
+                vertices.push(0);
+
+                vertices.push(ox+scale);
+                vertices.push(oy);
+                vertices.push(oz+scale);
+                vertices.push(0);
+                vertices.push(-1);
+                vertices.push(0);
+
+                vertices.push(ox);
+                vertices.push(oy);
+                vertices.push(oz);
+                vertices.push(0);
+                vertices.push(-1);
+                vertices.push(0);
+
+
+
                 // left
                 // right
                 // front
@@ -71,6 +123,38 @@ function generate_mesh(chunk){
     }
     return new Float32Array(vertices);
 } 
+
+voxel.Renderer = function(world) {
+    this.world = world;
+    this.buffers = {};
+};
+voxel.Renderer.prototype = {
+    visit: function(graph) {
+
+        var shader = graph.getShader(),
+            location = shader.getAttribLocation('position');
+
+        shader.uniforms(graph.uniforms);
+
+        for(var i = 0; i < this.world.chunks.length; i++) {
+            var chunk = this.world.chunks[i];
+            var vbo = this.buffers[chunk.key];
+            if(!vbo){
+                var mesh = generate_mesh(chunk);
+                console.log(mesh);
+                vbo = this.buffers[chunk.key] = new glutils.VBO(mesh);
+            }
+
+            vbo.bind();
+            gl.enableVertexAttribArray(location);
+            gl.vertexAttribPointer(location, 3, gl.FLOAT, false, 24, 0);
+            gl.drawArrays(gl.TRIANGLES, 0, vbo.length/6);
+            vbo.unbind();
+            // render chunk
+        }
+    }
+};
+
 
 voxel.generate_mesh = generate_mesh;
 

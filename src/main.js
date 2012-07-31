@@ -34,17 +34,22 @@ var loader = new Loader(),
     mousecontroller = new MouseController(input, null);
 
 function prepareScene(){
+    window.world = new voxel.World({width: 1, height: 1, depth: 1, chunk_options: {size: 2}});
+    window.renderer = new glvoxel.Renderer(window.world);
+
     var shader = new scene.Material(shaders.get('voxel'), {}, [
-            new scene.SimpleMesh(new glutils.VBO(mesh.cube()))
+            //new scene.SimpleMesh(new glutils.VBO(mesh.cube())),
+            window.renderer
         ]),
         camera = new scene.Camera([shader]);
     window.camera = camera;
+    camera.position[1] = 1;
+    camera.position[2] = 2;
     graph.root.append(camera);
     mousecontroller.camera = camera;
     gl.clearColor(0.5, 0.6, 0.8, 1.0);
     graph.viewportWidth = canvas.width;
     graph.viewportHeight = canvas.height;
-    window.world = new voxel.World({width: 1, height: 1, depth: 1});
     return;
 }
 
