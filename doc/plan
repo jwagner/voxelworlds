@@ -1,6 +1,5 @@
 setup webgl/project
 render box
-render texture
 implement camera (including fullscreen/relative movement)
 render a single chunk
 

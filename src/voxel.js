@@ -5,6 +5,24 @@ var voxel = provides('voxel'),
 
 voxel.World = function VoxelWorld(options) {
     extend(this, options);
+    this.materials = [
+                    // air
+                    {
+                        name: 'air',
+                        color: [0, 0, 0]
+                    },
+                    {
+                        name: 'grass',
+                        color: [0.58, 0.78, 0.37]
+                    },
+                    {
+                        name: 'dirt',
+                        color: [0.7, 0.47, 0.36]
+                    }
+
+
+
+    ];
     this.grid = [];
     this.chunks = [];
     this.init_chunks();
