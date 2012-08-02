@@ -3,7 +3,6 @@
 requires('jquery');
 requires('gl-matrix');
 requires('game-shim');
-requires('webgl-debug');
 
 provides('main');
 
@@ -34,19 +33,23 @@ var loader = new Loader(),
     mousecontroller = new MouseController(input, null);
 
 function prepareScene(){
-    window.world = new voxel.World({width: 1, height: 1, depth: 1, chunk_options: {size: 2}});
+    window.world = new voxel.World({width: 1, height: 1, depth: 1, chunk_options: {size: 128}});
     window.renderer = new glvoxel.Renderer(window.world);
 
     var shader = new scene.Material(shaders.get('voxel'), {}, [
             //new scene.SimpleMesh(new glutils.VBO(mesh.cube())),
             window.renderer
         ]),
-        camera = new scene.Camera([shader]);
+        camera = new scene.Camera([shader]),
+        globals = new scene.Uniforms({
+            sunDirection: vec3.normalize(vec3.create([0.1, 0.3, 0.5]))
+        }, [camera]);
     window.camera = camera;
-    camera.position[1] = 1;
-    camera.position[2] = 2;
-    graph.root.append(camera);
+    camera.position[1] = 32;
+    camera.position[2] = 32;
+    graph.root.append(globals);
     mousecontroller.camera = camera;
+    mousecontroller.velocity = 10;
     gl.clearColor(0.5, 0.6, 0.8, 1.0);
     graph.viewportWidth = canvas.width;
     graph.viewportHeight = canvas.height;
@@ -58,7 +61,7 @@ clock.ontick = function (td) {
     graph.draw();
 };
 
-if(glUtils.getContext(canvas, {}, {}) == null){
+if(glUtils.getContext(canvas, {}, {debug: true}) == null){
     //return;
 }
 

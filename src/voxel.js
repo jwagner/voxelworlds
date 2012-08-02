@@ -5,24 +5,6 @@ var voxel = provides('voxel'),
 
 voxel.World = function VoxelWorld(options) {
     extend(this, options);
-    this.materials = [
-                    // air
-                    {
-                        name: 'air',
-                        color: [0, 0, 0]
-                    },
-                    {
-                        name: 'grass',
-                        color: [0.58, 0.78, 0.37]
-                    },
-                    {
-                        name: 'dirt',
-                        color: [0.7, 0.47, 0.36]
-                    }
-
-
-
-    ];
     this.grid = [];
     this.chunks = [];
     this.init_chunks();
@@ -37,6 +19,21 @@ voxel.World.prototype = {
     depth: 32,
     height: 2,
     key: 1,
+    materials: [
+        {
+            name: 'air',
+            color: [0, 0, 0]
+        },
+        {
+            name: 'grass',
+            color: [0.58, 0.78, 0.37]
+        },
+        {
+            name: 'dirt',
+            color: [0.7, 0.47, 0.36]
+        }
+
+    ],
     init_chunks: function () {
         var rect, line;
         for(var x = 0; x < this.width; x++) {
@@ -63,7 +60,14 @@ voxel.Chunk = function (key, x, y, z, options){
     this.voxels = new Uint8Array(this.size*this.size*this.size);
     for(x = 0; x < this.size; x++) {
         for(z = 0; z < this.size; z++) {
-            this.voxels[x+z*this.size*this.size] = 1;
+            var xd = (x/this.size-0.5),
+                yd = (z/this.size-0.5),
+                d = Math.sqrt(xd*xd+yd*yd),
+                a = (Math.sin(d*32.0)+1)*this.size/((d+1)*10);
+            for(y = 0; y < a; y++) {
+                this.voxels[x+y*this.size+z*this.size*this.size] = 1;
+            }
+
         }
     }
 };

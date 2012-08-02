@@ -1,5 +1,7 @@
 (function(){
 
+requires('webgl-debug');
+
 var glUtils = provides('gl.utils');
 
 glUtils.Texture2D = function Texture2D(image) {
