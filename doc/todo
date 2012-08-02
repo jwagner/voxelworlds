@@ -2,3 +2,5 @@ gameshim:
     https://github.com/toji/game-shim/blob/master/game-shim.js
 
 hires timers for clock.js
+
+slice array buffers to get rid of untyped array for mesh generation
