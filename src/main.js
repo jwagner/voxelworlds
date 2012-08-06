@@ -6,6 +6,8 @@ requires('game-shim');
 
 provides('main');
 
+
+
 var Loader = requires('loader').Loader,
     Clock = requires('clock').Clock,
     glUtils = requires('gl.utils'),
@@ -16,6 +18,7 @@ var Loader = requires('loader').Loader,
     glutils = requires('gl.utils'),
     glvoxel = requires('gl.voxel'),
     voxel = requires('voxel'),
+    getHashValue = requires('utils').getHashValue,
     ShaderManager = requires('gl.shader').Manager;
 
 var RESOURCES = [
@@ -30,10 +33,11 @@ var loader = new Loader(),
     input = new InputHandler(canvas),
     clock = new Clock(),
     graph = new scene.Graph(),
-    mousecontroller = new MouseController(input, null);
+    mousecontroller = new MouseController(input, null),
+    debug = getHashValue('debug', '0') !== '0';
 
 function prepareScene(){
-    window.world = new voxel.World({width: 1, height: 1, depth: 1, chunk_options: {size: 128}});
+    window.world = new voxel.World({width: 32, height: 1, depth: 32, chunk_options: {size: 32}});
     window.renderer = new glvoxel.Renderer(window.world);
 
     var shader = new scene.Material(shaders.get('voxel'), {}, [
@@ -45,7 +49,7 @@ function prepareScene(){
             sunDirection: vec3.normalize(vec3.create([0.1, 0.3, 0.5]))
         }, [camera]);
     window.camera = camera;
-    camera.position[1] = 32;
+    camera.position[1] = 8;
     camera.position[2] = 32;
     graph.root.append(globals);
     mousecontroller.camera = camera;
@@ -61,7 +65,7 @@ clock.ontick = function (td) {
     graph.draw();
 };
 
-if(glUtils.getContext(canvas, {}, {debug: true}) == null){
+if(glUtils.getContext(canvas, {}, {debug: debug}) == null){
     //return;
 }
 

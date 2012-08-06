@@ -10,3 +10,4 @@ Experiment with heavy ssao/ssdo
 rim lighting
 
 rounded corner voxels?
+don't render blocks farther than x if less than f(x) voxels

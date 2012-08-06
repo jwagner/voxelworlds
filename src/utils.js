@@ -24,5 +24,13 @@ utils.clamp = function clamp(a, b, c) {
     return a < b ? b : (a > c ? c : a);
 };
 
+utils.getHashValue = function(name, default_){
+    var match = window.location.hash.match('[#,]+' + name + '(=([^,]*))?');
+    if(!match){
+        return default_;
+    }
+    return match.length == 3 && match[2] != null ? match[2] : true;
+};
+
 })();
 

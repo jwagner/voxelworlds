@@ -49,7 +49,44 @@ voxel.World.prototype = {
             }
             this.grid.push(rect);
         }
-    }
+    },
+    line_segment_query: function(ray) {
+        var x = ray[0], y = ray[1], z = ray[2],
+            dx = ray[3], dy = ray[4], dz = ray[5],
+            step_x = dx > 0 ? 1 : -1,
+            step_y = dy > 0 ? 1 : -1,
+            step_z = dz > 0 ? 1 : -1,
+            max_x = dx < 0 ? -0.5 : 0.5,
+            max_y = dy < 0 ? -0.5 : 0.5,
+            max_z = dz < 0 ? -0.5 : 0.5,
+            delta_x = 1.0/dx,
+            delta_y = 1.0/dy,
+            delta_z = 1.0/dz;
+
+        while(true){
+            if(max_x < max_y)
+            {
+                if(max_x < max_z){
+                    x += step_x;
+                    max_x += delta_x;
+                }
+                else{
+                    z += step_z;
+                    max_z += delta_z;
+                }
+            }
+            else {
+                if(max_y < max_z){
+                    y += step_y;
+                    max_y += delta_y;
+                }
+                else{
+                    z += step_z;
+                    max_z += delta_z;
+                }
+            }
+        }
+    } 
 };
 
 voxel.Chunk = function (key, x, y, z, options){
@@ -63,9 +100,9 @@ voxel.Chunk = function (key, x, y, z, options){
             var xd = (x/this.size-0.5),
                 yd = (z/this.size-0.5),
                 d = Math.sqrt(xd*xd+yd*yd),
-                a = (Math.sin(d*32.0)+1)*this.size/((d+1)*10);
+                a = (Math.sin(d*32.0)+1)*this.size/((d+1)*5);
             for(y = 0; y < a; y++) {
-                this.voxels[x+y*this.size+z*this.size*this.size] = 1;
+                this.voxels[x+y*this.size+z*this.size*this.size] = y > 5 ? 1 : 2;
             }
 
         }

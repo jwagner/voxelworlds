@@ -9,6 +9,8 @@ var voxel = provides('gl.voxel'),
 voxel.Renderer = function(world) {
     this.world = world;
     this.buffers = {};
+    
+    this._mesh_generation_buffer = null;
 };
 voxel.Renderer.prototype = {
     visit: function(graph) {
@@ -43,14 +45,30 @@ voxel.Renderer.prototype = {
         }
     },
     generate_mesh: function(chunk){
-        var vertices = [],
-            materials = this.world.materials,
+        var materials = this.world.materials,
             voxels = chunk.voxels,
             size = chunk.size,
             scale = chunk.voxel_scale,
             offset_x = chunk.position[0]*chunk.size*scale,
             offset_y = chunk.position[1]*chunk.size*scale,
-            offset_z = chunk.position[2]*chunk.size*scale;
+            offset_z = chunk.position[2]*chunk.size*scale,
+            mesh,
+            m = 0; // mesh index;
+
+        if(this._mesh_generation_buffer === null){
+            console.log('allocating buffer');
+            this._mesh_generation_buffer = new Float32Array(
+                9 * // floats per vertex
+                6 * // vertices per side
+                6 * // sides per voxel
+                size * size * size * // voxels per chunk
+                0.5 // worst case is a 3d checkerboard so 50%
+            );
+            console.log('allocating buffer.');
+        }
+
+        mesh = this._mesh_generation_buffer;
+
         for(var x = 0; x < size; x++) {
             var ox = offset_x + x*scale;
             for(var y = 0; y < size; y++) {
@@ -66,394 +84,394 @@ voxel.Renderer.prototype = {
                         b = color[2];
 
                     if(voxel === 0) continue;
+
                     // top
-                    if(oz === scale-1 || voxels[i+size] === 0){
-                        vertices.push(ox);
-                        vertices.push(oy+scale);
-                        vertices.push(oz);
-                        vertices.push(0);
-                        vertices.push(1);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                    if(z === scale-1 || voxels[i+size] === 0){
+                        mesh[m++]=(ox);
+                        mesh[m++]=(oy+scale);
+                        mesh[m++]=(oz);
+                        mesh[m++]=(0);
+                        mesh[m++]=(1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox);
-                        vertices.push(oy+scale);
-                        vertices.push(oz+scale);
-                        vertices.push(0);
-                        vertices.push(1);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox);
+                        mesh[m++]=(oy+scale);
+                        mesh[m++]=(oz+scale);
+                        mesh[m++]=(0);
+                        mesh[m++]=(1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox+scale);
-                        vertices.push(oy+scale);
-                        vertices.push(oz+scale);
-                        vertices.push(0);
-                        vertices.push(1);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox+scale);
+                        mesh[m++]=(oy+scale);
+                        mesh[m++]=(oz+scale);
+                        mesh[m++]=(0);
+                        mesh[m++]=(1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox+scale);
-                        vertices.push(oy+scale);
-                        vertices.push(oz);
-                        vertices.push(0);
-                        vertices.push(1);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox+scale);
+                        mesh[m++]=(oy+scale);
+                        mesh[m++]=(oz);
+                        mesh[m++]=(0);
+                        mesh[m++]=(1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox);
-                        vertices.push(oy+scale);
-                        vertices.push(oz);
-                        vertices.push(0);
-                        vertices.push(1);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox);
+                        mesh[m++]=(oy+scale);
+                        mesh[m++]=(oz);
+                        mesh[m++]=(0);
+                        mesh[m++]=(1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox+scale);
-                        vertices.push(oy+scale);
-                        vertices.push(oz+scale);
-                        vertices.push(0);
-                        vertices.push(1);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox+scale);
+                        mesh[m++]=(oy+scale);
+                        mesh[m++]=(oz+scale);
+                        mesh[m++]=(0);
+                        mesh[m++]=(1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
                     }
 
                     // bottom
-                    if(oz === 0 || voxels[i-size] === 0){
-                        vertices.push(ox+scale);
-                        vertices.push(oy);
-                        vertices.push(oz+scale);
-                        vertices.push(0);
-                        vertices.push(-1);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                    if(z === 0 || voxels[i-size] === 0){
+                        mesh[m++]=(ox+scale);
+                        mesh[m++]=(oy);
+                        mesh[m++]=(oz+scale);
+                        mesh[m++]=(0);
+                        mesh[m++]=(-1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox);
-                        vertices.push(oy);
-                        vertices.push(oz+scale);
-                        vertices.push(0);
-                        vertices.push(-1);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox);
+                        mesh[m++]=(oy);
+                        mesh[m++]=(oz+scale);
+                        mesh[m++]=(0);
+                        mesh[m++]=(-1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox);
-                        vertices.push(oy);
-                        vertices.push(oz);
-                        vertices.push(0);
-                        vertices.push(-1);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox);
+                        mesh[m++]=(oy);
+                        mesh[m++]=(oz);
+                        mesh[m++]=(0);
+                        mesh[m++]=(-1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox+scale);
-                        vertices.push(oy);
-                        vertices.push(oz);
-                        vertices.push(0);
-                        vertices.push(-1);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox+scale);
+                        mesh[m++]=(oy);
+                        mesh[m++]=(oz);
+                        mesh[m++]=(0);
+                        mesh[m++]=(-1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox+scale);
-                        vertices.push(oy);
-                        vertices.push(oz+scale);
-                        vertices.push(0);
-                        vertices.push(-1);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox+scale);
+                        mesh[m++]=(oy);
+                        mesh[m++]=(oz+scale);
+                        mesh[m++]=(0);
+                        mesh[m++]=(-1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox);
-                        vertices.push(oy);
-                        vertices.push(oz);
-                        vertices.push(0);
-                        vertices.push(-1);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox);
+                        mesh[m++]=(oy);
+                        mesh[m++]=(oz);
+                        mesh[m++]=(0);
+                        mesh[m++]=(-1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
                     }
 
                     // left
-                    if(ox === 0 || voxels[i-1] === 0){
-                        vertices.push(ox);
-                        vertices.push(oy+scale);
-                        vertices.push(oz);
-                        vertices.push(-1);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                    if(x === 0 || voxels[i-1] === 0){
+                        mesh[m++]=(ox);
+                        mesh[m++]=(oy+scale);
+                        mesh[m++]=(oz);
+                        mesh[m++]=(-1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox);
-                        vertices.push(oy);
-                        vertices.push(oz);
-                        vertices.push(-1);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox);
+                        mesh[m++]=(oy);
+                        mesh[m++]=(oz);
+                        mesh[m++]=(-1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox);
-                        vertices.push(oy);
-                        vertices.push(oz+scale);
-                        vertices.push(-1);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox);
+                        mesh[m++]=(oy);
+                        mesh[m++]=(oz+scale);
+                        mesh[m++]=(-1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
 
-                        vertices.push(ox);
-                        vertices.push(oy+scale);
-                        vertices.push(oz);
-                        vertices.push(-1);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox);
+                        mesh[m++]=(oy+scale);
+                        mesh[m++]=(oz);
+                        mesh[m++]=(-1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox);
-                        vertices.push(oy);
-                        vertices.push(oz+scale);
-                        vertices.push(-1);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox);
+                        mesh[m++]=(oy);
+                        mesh[m++]=(oz+scale);
+                        mesh[m++]=(-1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox);
-                        vertices.push(oy+scale);
-                        vertices.push(oz+scale);
-                        vertices.push(-1);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox);
+                        mesh[m++]=(oy+scale);
+                        mesh[m++]=(oz+scale);
+                        mesh[m++]=(-1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
                     }
 
                     // right
-                    if(ox === size-1 || voxels[i+1] === 0){
-                        vertices.push(ox+scale);
-                        vertices.push(oy+scale);
-                        vertices.push(oz);
-                        vertices.push(1);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                    if(x === size-1 || voxels[i+1] === 0){
+                        mesh[m++]=(ox+scale);
+                        mesh[m++]=(oy+scale);
+                        mesh[m++]=(oz);
+                        mesh[m++]=(1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox+scale);
-                        vertices.push(oy);
-                        vertices.push(oz+scale);
-                        vertices.push(1);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox+scale);
+                        mesh[m++]=(oy);
+                        mesh[m++]=(oz+scale);
+                        mesh[m++]=(1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox+scale);
-                        vertices.push(oy);
-                        vertices.push(oz);
-                        vertices.push(1);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox+scale);
+                        mesh[m++]=(oy);
+                        mesh[m++]=(oz);
+                        mesh[m++]=(1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
 
-                        vertices.push(ox+scale);
-                        vertices.push(oy+scale);
-                        vertices.push(oz);
-                        vertices.push(1);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox+scale);
+                        mesh[m++]=(oy+scale);
+                        mesh[m++]=(oz);
+                        mesh[m++]=(1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox+scale);
-                        vertices.push(oy+scale);
-                        vertices.push(oz+scale);
-                        vertices.push(1);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox+scale);
+                        mesh[m++]=(oy+scale);
+                        mesh[m++]=(oz+scale);
+                        mesh[m++]=(1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox+scale);
-                        vertices.push(oy);
-                        vertices.push(oz+scale);
-                        vertices.push(1);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox+scale);
+                        mesh[m++]=(oy);
+                        mesh[m++]=(oz+scale);
+                        mesh[m++]=(1);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
                     }
 
                     // front
-                    if(oz === size-1 || voxels[i+size*size] === 0){
-                        vertices.push(ox);
-                        vertices.push(oy+scale);
-                        vertices.push(oz+scale);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(1);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                    if(z === size-1 || voxels[i+size*size] === 0){
+                        mesh[m++]=(ox);
+                        mesh[m++]=(oy+scale);
+                        mesh[m++]=(oz+scale);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(1);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox);
-                        vertices.push(oy);
-                        vertices.push(oz+scale);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(1);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox);
+                        mesh[m++]=(oy);
+                        mesh[m++]=(oz+scale);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(1);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox+scale);
-                        vertices.push(oy);
-                        vertices.push(oz+scale);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(1);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox+scale);
+                        mesh[m++]=(oy);
+                        mesh[m++]=(oz+scale);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(1);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
 
-                        vertices.push(ox);
-                        vertices.push(oy+scale);
-                        vertices.push(oz+scale);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(1);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox);
+                        mesh[m++]=(oy+scale);
+                        mesh[m++]=(oz+scale);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(1);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox+scale);
-                        vertices.push(oy);
-                        vertices.push(oz+scale);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(1);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox+scale);
+                        mesh[m++]=(oy);
+                        mesh[m++]=(oz+scale);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(1);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox+scale);
-                        vertices.push(oy+scale);
-                        vertices.push(oz+scale);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(1);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox+scale);
+                        mesh[m++]=(oy+scale);
+                        mesh[m++]=(oz+scale);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(1);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
                     }
 
                     // back
-                    if(oz === 0 || voxels[i-size*size] === 0){
-                        vertices.push(ox);
-                        vertices.push(oy);
-                        vertices.push(oz);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(-1);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                    if(z === 0 || voxels[i-size*size] === 0){
+                        mesh[m++]=(ox);
+                        mesh[m++]=(oy);
+                        mesh[m++]=(oz);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(-1);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
 
-                        vertices.push(ox);
-                        vertices.push(oy+scale);
-                        vertices.push(oz);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(-1);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox);
+                        mesh[m++]=(oy+scale);
+                        mesh[m++]=(oz);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(-1);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox+scale);
-                        vertices.push(oy);
-                        vertices.push(oz);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(-1);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox+scale);
+                        mesh[m++]=(oy);
+                        mesh[m++]=(oz);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(-1);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
 
-                        vertices.push(ox+scale);
-                        vertices.push(oy);
-                        vertices.push(oz);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(-1);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox+scale);
+                        mesh[m++]=(oy);
+                        mesh[m++]=(oz);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(-1);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox);
-                        vertices.push(oy+scale);
-                        vertices.push(oz);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(-1);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox);
+                        mesh[m++]=(oy+scale);
+                        mesh[m++]=(oz);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(-1);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
 
-                        vertices.push(ox+scale);
-                        vertices.push(oy+scale);
-                        vertices.push(oz);
-                        vertices.push(0);
-                        vertices.push(0);
-                        vertices.push(-1);
-                        vertices.push(r);
-                        vertices.push(g);
-                        vertices.push(b);
+                        mesh[m++]=(ox+scale);
+                        mesh[m++]=(oy+scale);
+                        mesh[m++]=(oz);
+                        mesh[m++]=(0);
+                        mesh[m++]=(0);
+                        mesh[m++]=(-1);
+                        mesh[m++]=(r);
+                        mesh[m++]=(g);
+                        mesh[m++]=(b);
                     }
-
                 }
             }
         }
-        return new Float32Array(vertices);
+        return new Float32Array(mesh.buffer.slice(0, (m-1)*4));
     } 
 
 };
