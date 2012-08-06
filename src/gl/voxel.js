@@ -86,7 +86,7 @@ voxel.Renderer.prototype = {
                     if(voxel === 0) continue;
 
                     // top
-                    if(z === scale-1 || voxels[i+size] === 0){
+                    if(y === size-1 || voxels[i+size] === 0){
                         mesh[m++]=(ox);
                         mesh[m++]=(oy+scale);
                         mesh[m++]=(oz);
@@ -150,7 +150,7 @@ voxel.Renderer.prototype = {
                     }
 
                     // bottom
-                    if(z === 0 || voxels[i-size] === 0){
+                    if(y === 0 || voxels[i-size] === 0){
                         mesh[m++]=(ox+scale);
                         mesh[m++]=(oy);
                         mesh[m++]=(oz+scale);

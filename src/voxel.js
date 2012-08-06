@@ -3,6 +3,8 @@
 var voxel = provides('voxel'),
     extend = requires('utils').extend;
 
+requires('noise');
+
 voxel.World = function VoxelWorld(options) {
     extend(this, options);
     this.grid = [];
@@ -89,6 +91,7 @@ voxel.World.prototype = {
     } 
 };
 
+    var noise = new window.SimplexNoise();
 voxel.Chunk = function (key, x, y, z, options){
     extend(this, options);
     this.position = vec3.create([x, y, z]);
@@ -96,15 +99,14 @@ voxel.Chunk = function (key, x, y, z, options){
     this.init_aabb(x, y, z);
     this.voxels = new Uint8Array(this.size*this.size*this.size);
     for(x = 0; x < this.size; x++) {
-        for(z = 0; z < this.size; z++) {
-            var xd = (x/this.size-0.5),
-                yd = (z/this.size-0.5),
-                d = Math.sqrt(xd*xd+yd*yd),
-                a = (Math.sin(d*32.0)+1)*this.size/((d+1)*5);
-            for(y = 0; y < a; y++) {
-                this.voxels[x+y*this.size+z*this.size*this.size] = y > 5 ? 1 : 2;
+        for(y = 0; y < this.size; y++) {
+            for(z = 0; z < this.size; z++) {
+                var density = noise.noise3d((this.position[0]*this.size+x)/64,
+                                            (this.position[1]*this.size+y)/64,
+                                            (this.position[2]*this.size+z)/64);
+                density -= (y+this.position[1]*this.size)/32;
+                this.voxels[x+y*this.size+z*this.size*this.size] = density > -1.0 ? (density > -0.95 ? 2 : 1) : 0;
             }
-
         }
     }
 };

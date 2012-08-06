@@ -8,6 +8,7 @@
         "main": "browser"
     },
     "provides": {
+        "noise": "./lib/noise.js",
         "jquery": "./lib/jquery.js",
         "game-shim": "./lib/game-shim.js",
         "gl-matrix": "./lib/gl-matrix.js",

@@ -37,7 +37,7 @@ var loader = new Loader(),
     debug = getHashValue('debug', '0') !== '0';
 
 function prepareScene(){
-    window.world = new voxel.World({width: 32, height: 1, depth: 32, chunk_options: {size: 32}});
+    window.world = new voxel.World({width: 8, height: 2, depth: 8, chunk_options: {size: 32}});
     window.renderer = new glvoxel.Renderer(window.world);
 
     var shader = new scene.Material(shaders.get('voxel'), {}, [
