@@ -1,4 +1,6 @@
 add voxel count to chunks
+optimize simplex noise:
+    http://webstaff.itn.liu.se/~stegu/simplexnoise/SimplexNoise.java
 
 gameshim:
     https://github.com/toji/game-shim/blob/master/game-shim.js
