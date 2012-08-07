@@ -144,8 +144,7 @@ voxel.World.prototype = {
     }
 };
 
-var rnd = 0;
-    var noise = new window.SimplexNoise(function(){return 1.0/rnd++;});
+var simplex = new window.SimplexNoise();
 voxel.Chunk = function (key, x, y, z, options){
     extend(this, options);
     this.position = vec3.create([x, y, z]);
@@ -155,7 +154,7 @@ voxel.Chunk = function (key, x, y, z, options){
     for(x = 0; x < this.size; x++) {
         for(y = 0; y < this.size; y++) {
             for(z = 0; z < this.size; z++) {
-                var density = noise.noise3D((this.position[0]*this.size+x)/64,
+                var density = simplex.noise3D((this.position[0]*this.size+x)/64,
                                             (this.position[1]*this.size+y)/64,
                                             (this.position[2]*this.size+z)/64);
                 density -= (y+this.position[1]*this.size)/32;
