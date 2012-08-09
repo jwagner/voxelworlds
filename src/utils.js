@@ -1,5 +1,7 @@
-(function(){
-var utils = provides('utils');
+if (typeof define !== 'function') { var define = require('amdefine')(module);}
+define(function(require, exports, module){
+    
+var utils = exports;
 utils.extend = function extend() {
     var target = arguments[0],
         i, argument, name, f, value;
@@ -32,5 +34,4 @@ utils.getHashValue = function(name, default_){
     return match.length == 3 && match[2] != null ? match[2] : true;
 };
 
-})();
-
+});

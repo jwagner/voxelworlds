@@ -1,5 +1,6 @@
-(function () {
-var clock = provides('clock'),
+define(function(require, exports, module){
+    
+var clock = exports,
     requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
 
 
@@ -45,4 +46,4 @@ clock.Clock.prototype = {
     ontick: function() {}
 };
 
-})();
+});

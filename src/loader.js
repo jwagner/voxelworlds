@@ -1,5 +1,5 @@
-(function(){
-var loader = provides('loader');
+define(function(require, exports, module){
+var loader = exports;
 
 loader.Loader = function Loader(root){
     this.root = root || '';
@@ -96,4 +96,4 @@ loader.Loader.prototype = {
     }
 };
 
-})();
+});

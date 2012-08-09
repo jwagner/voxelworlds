@@ -1,6 +1,7 @@
-(function(){
+define(function(require, exports, module){
+    
 
-var shader = provides('gl.shader');
+var shader = exports;
 
 function makeShader(shaderType, source){
     var shader = gl.createShader(shaderType);
@@ -170,4 +171,4 @@ shader.Manager.prototype = {
     }
 };
 
-})();
+});

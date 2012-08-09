@@ -1,14 +1,12 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
     <head>
         <title>Voxel</title>
-        <script>var require = {paths: {'glmatrix': 'lib/gl-matrix', 'webgldebug': 'lib/webgl-debug' }};</script>
-        <script src="lib/require.js"></script>
-        <script src="main.min.js"></script>
-        <script>require(['src/main'])</script>
     </head>
     <body>
         <h1>Voxel</h1>
-        <canvas id=c width=1280 height=720></canvas>
+        <canvas width=1200 height=720 id=c></canvas>
+        <script src=../node_modules/requirejs/require.js></script>
+        <script src=main.js></script>
     </body>
 </html>

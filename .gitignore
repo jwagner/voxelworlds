@@ -1,3 +1,5 @@
 build/main.js
 *.pyc
 *.swp
+node_modules
+build/min

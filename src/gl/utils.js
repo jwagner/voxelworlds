@@ -1,8 +1,9 @@
-(function(){
+define(function(require, exports, module){
+    
 
-requires('webgl-debug');
+require('webgl-debug');
 
-var glUtils = provides('gl.utils');
+var glUtils = exports;
 
 glUtils.Texture2D = function Texture2D(image) {
     this.texture = gl.createTexture();
@@ -165,4 +166,4 @@ glUtils.onerror = function(){
 };
 
 
-})();
+});

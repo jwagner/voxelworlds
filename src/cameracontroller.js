@@ -1,7 +1,7 @@
-(function(){
+define(function(require, exports, module){
 
-var cameracontroller = provides('cameracontroller'),
-    clamp = requires('utils').clamp;
+var cameracontroller = exports,
+    clamp = require('utils').clamp;
 
 
 
@@ -41,4 +41,4 @@ cameracontroller.MouseController.prototype = {
     }
 };
 
-})();
+});

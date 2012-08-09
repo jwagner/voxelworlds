@@ -1,8 +1,9 @@
-(function(){
-var scene = provides('gl.scene'),
-    mesh = requires('gl.mesh'),
-    glUtils = requires('gl.utils'),
-    extend = requires('utils').extend;
+define(function(require, exports, module){
+    
+var scene = exports,
+    mesh = require('gl/mesh'),
+    glUtils = require('gl/utils'),
+    extend = require('utils').extend;
 
 scene.Node = function SceneNode(children){
     this.children = children || [];
@@ -339,4 +340,4 @@ scene.SimpleMesh.prototype = {
     }
 };
 
-})();
+});

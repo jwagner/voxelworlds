@@ -1,9 +1,9 @@
-(function(){
+define(function(require, exports, module){
     
-var voxel = provides('gl.voxel'),
-    extend = requires('utils').extend,
-    glutils = requires('gl.utils'),
-    scene = requires('gl.scene');
+var voxel = exports,
+    extend = require('utils').extend,
+    glutils = require('gl/utils'),
+    scene = require('gl/scene');
 
 
 voxel.Renderer = function(world) {
@@ -24,6 +24,7 @@ voxel.Renderer.prototype = {
 
         for(var i = 0; i < this.world.chunks.length; i++) {
             var chunk = this.world.chunks[i];
+            if(chunk.nonempty_voxels === 0) continue;
             var vbo = this.buffers[chunk.key];
             if(!vbo){
                 var mesh = this.generate_mesh(chunk);
@@ -76,14 +77,14 @@ voxel.Renderer.prototype = {
                 for(var z = 0; z < size; z++) {
                     var oz = offset_z + z*scale,
                         i = x+y*size+z*size*size,
-                        voxel = voxels[i],
-                        material = materials[voxel],
+                        voxel = voxels[i];
+                    if(voxel === 0) continue;
+                    var material = materials[voxel],
                         color = material.color,
                         r = color[0],
                         g = color[1],
                         b = color[2];
 
-                    if(voxel === 0) continue;
 
                     // top
                     if(y === size-1 || voxels[i+size] === 0){
@@ -477,5 +478,4 @@ voxel.Renderer.prototype = {
 };
 
 
-})();
-
+});

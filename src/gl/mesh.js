@@ -1,6 +1,6 @@
-(function(){
-
-var mesh = provides('gl.mesh');
+define(function(require, exports, module){
+    
+var mesh = exports;
 mesh.grid = function(size){
     var buffer = new Float32Array(size*size*6*3),
         i = 0,
@@ -123,4 +123,4 @@ mesh.cube = function cube(scale) {
         ]);
 };
 
-})();
+});

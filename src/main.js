@@ -1,25 +1,21 @@
-//(function(){
+define(function(require, exports){
 
-requires('jquery');
-requires('gl-matrix');
-requires('game-shim');
+require('jquery');
+require('gl-matrix');
+require('game-shim');
 
-provides('main');
-
-
-
-var Loader = requires('loader').Loader,
-    Clock = requires('clock').Clock,
-    glUtils = requires('gl.utils'),
-    InputHandler = requires('input').Handler,
-    MouseController = requires('cameracontroller').MouseController,
-    scene = requires('gl.scene'),
-    mesh = requires('gl.mesh'),
-    glutils = requires('gl.utils'),
-    glvoxel = requires('gl.voxel'),
-    voxel = requires('voxel'),
-    getHashValue = requires('utils').getHashValue,
-    ShaderManager = requires('gl.shader').Manager;
+var Loader = require('loader').Loader,
+    Clock = require('clock').Clock,
+    glUtils = require('gl/utils'),
+    InputHandler = require('input').Handler,
+    MouseController = require('cameracontroller').MouseController,
+    scene = require('gl/scene'),
+    mesh = require('gl/mesh'),
+    glutils = require('gl/utils'),
+    glvoxel = require('gl/voxel'),
+    voxel = require('voxel'),
+    getHashValue = require('utils').getHashValue,
+    ShaderManager = require('gl/shader').Manager;
 
 var RESOURCES = [
     'shaders/voxel.vertex',
@@ -38,6 +34,8 @@ var loader = new Loader(),
 
 function prepareScene(){
     window.world = new voxel.World({width: 8, height: 2, depth: 8, chunk_options: {size: 32}});
+    voxel.random_world(window.world);
+    //voxel.flat_world(window.world, 10);
     window.renderer = new glvoxel.Renderer(window.world);
 
     var shader = new scene.Material(shaders.get('voxel'), {}, [
@@ -49,8 +47,10 @@ function prepareScene(){
             sunDirection: vec3.normalize(vec3.create([0.1, 0.3, 0.5]))
         }, [camera]);
     window.camera = camera;
-    camera.position[1] = 8;
-    camera.position[2] = 32;
+    camera.position[0] = 4*32*0.5;
+    camera.position[1] = 6*32*0.5;
+    camera.position[2] = 8*32*0.5;
+    camera.pitch = Math.PI*0.25;
     graph.root.append(globals);
     mousecontroller.camera = camera;
     mousecontroller.velocity = 10;
@@ -77,4 +77,4 @@ loader.onready = function() {
 
 loader.load(RESOURCES);
 
-//})();
+});

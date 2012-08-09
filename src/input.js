@@ -1,7 +1,6 @@
-(function(){
-var input = provides('input');
-
-var clamp = requires('utils').clamp;
+define(function(require, exports, module){
+var input = exports,
+    clamp = require('utils').clamp;
 
 // mapping keycodes to names
 var keyname = {
@@ -139,4 +138,4 @@ input.Handler.prototype = {
     }
  
 };
-})();
+});
