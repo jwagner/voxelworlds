@@ -118,6 +118,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(g);
                         mesh[m++]=(b);
 
+
                         mesh[m++]=(ox+scale);
                         mesh[m++]=(oy+scale);
                         mesh[m++]=(oz);
@@ -181,6 +182,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+
 
                         mesh[m++]=(ox+scale);
                         mesh[m++]=(oy);
@@ -417,7 +419,6 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(g);
                         mesh[m++]=(b);
 
-
                         mesh[m++]=(ox);
                         mesh[m++]=(oy+scale);
                         mesh[m++]=(oz);
@@ -472,7 +473,7 @@ voxel.Renderer.prototype = {
                 }
             }
         }
-        return new Float32Array(mesh.buffer.slice(0, (m-1)*4));
+        return new Float32Array(mesh.buffer.slice(0, m*4-1));
     } 
 
 };
