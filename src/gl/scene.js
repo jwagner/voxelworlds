@@ -3,6 +3,10 @@ define(function(require, exports, module){
 var scene = exports,
     mesh = require('gl/mesh'),
     glUtils = require('gl/utils'),
+    vec3 = require('gl-matrix').vec3,
+    vec4 = require('gl-matrix').vec4,
+    mat3 = require('gl-matrix').mat3,
+    mat4 = require('gl-matrix').mat4,
     extend = require('utils').extend;
 
 scene.Node = function SceneNode(children){
@@ -172,6 +176,13 @@ scene.Camera.prototype = extend({}, scene.Node.prototype, {
     exit: function(graph) {
         graph.popUniforms();
     },
+    getRay: function() {
+        var invRot = this.getInverseRotation(),
+            forward = vec3.create([0, 0, -1]);
+        mat4.multiplyVec3(invRot, forward);
+        vec3.normalize(forward);
+        return new Float32Array([this.position[0], this.position[1], this.position[2], forward[0], forward[1], forward[2]]);
+    }, 
     getInverseRotation: function () {
         return mat3.toMat4(mat4.toInverseMat3(this.getWorldView()));
     },
