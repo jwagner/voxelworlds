@@ -2,20 +2,11 @@
     "predef": [
       "define",
       "require",
-      "assert",
       "io",
       "gl",
-      "extend",
-      "mat4",
-      "mat3",
-      "vec3",
-      "vec4",
-      "MatrixArray",
-      "console",
       "WebGLDebugUtils",
-      "clamp",
-      "buster",
-      "alert"
+      "alert",
+      "console"
     ],
     "browser" : true,
     "node" : true,
