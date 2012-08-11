@@ -1,11 +1,7 @@
-add voxel count to chunks
-optimize simplex noise:
-    http://webstaff.itn.liu.se/~stegu/simplexnoise/SimplexNoise.java
+clip ray query to actual world
 
 gameshim:
     https://github.com/toji/game-shim/blob/master/game-shim.js
 
 hires timers for clock.js
 perfhub
-
-slice array buffers to get rid of untyped array for mesh generation
