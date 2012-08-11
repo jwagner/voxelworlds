@@ -24,7 +24,7 @@ voxel.World.prototype = {
     chunk_options: {
         size: 32,
         // world size scale
-        chunk_scale: 0.5
+        scale: 0.5
     },
     width: 32,
     depth: 32,

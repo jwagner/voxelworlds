@@ -28,7 +28,7 @@ voxel.Renderer.prototype = {
             var vbo = this.buffers[chunk.key];
             if(!vbo){
                 var mesh = this.generate_mesh(chunk);
-                console.log(mesh);
+                //console.log(mesh);
                 vbo = this.buffers[chunk.key] = new glutils.VBO(mesh);
             }
 
@@ -57,7 +57,7 @@ voxel.Renderer.prototype = {
             m = 0; // mesh index;
 
         if(this._mesh_generation_buffer === null){
-            console.log('allocating buffer');
+            //console.log('allocating buffer');
             this._mesh_generation_buffer = new Float32Array(
                 9 * // floats per vertex
                 6 * // vertices per side
@@ -65,7 +65,7 @@ voxel.Renderer.prototype = {
                 size * size * size * // voxels per chunk
                 0.5 // worst case is a 3d checkerboard so 50%
             );
-            console.log('allocating buffer.');
+            //console.log('allocating buffer.');
         }
 
         mesh = this._mesh_generation_buffer;
