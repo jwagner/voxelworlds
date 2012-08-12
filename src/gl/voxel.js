@@ -474,7 +474,7 @@ voxel.Renderer.prototype = {
             }
         }
         if(m===0) return new Float32Array();
-        return new Float32Array(mesh.buffer.slice(0, m*4-4));
+        return new Float32Array(mesh.buffer.slice(0, m*4));
     } 
 
 };
