@@ -146,7 +146,8 @@ voxel.World.prototype = {
             //console.log('c', cx, cy, cz);
             if(x < 0 || x >= limit_x || y < 0 || y >= limit_y || z < 0 || z >= limit_z){
                 //console.log('limit');
-                break;
+                //TODO: solve this by clipping!
+                continue;
             }
             var voxel = this.grid[gx][gy][gz].voxels[cs+cy+cz];
             if(voxel !== 0){

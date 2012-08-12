@@ -1,7 +1,6 @@
 define(function(require, exports){
 
 require('jquery');
-require('gl-matrix');
 require('game-shim');
 
 var Loader = require('loader').Loader,
@@ -15,6 +14,7 @@ var Loader = require('loader').Loader,
     glvoxel = require('gl/voxel'),
     voxel = require('voxel'),
     getHashValue = require('utils').getHashValue,
+    vec3 = require('gl-matrix').vec3,
     ShaderManager = require('gl/shader').Manager;
 
 var RESOURCES = [
@@ -30,10 +30,11 @@ var loader = new Loader(),
     clock = new Clock(),
     graph = new scene.Graph(),
     mousecontroller = new MouseController(input, null),
-    debug = getHashValue('debug', '0') !== '0';
+    debug = getHashValue('debug', '0') !== '0',
+    debug_element = $('#debug');
 
 function prepareScene(){
-    window.world = new voxel.World({width: 8, height: 2, depth: 8, chunk_options: {size: 32}});
+    window.world = new voxel.World({width: 8, height: 2, depth: 8, chunk_options: {size: 32, scale: 0.5}});
     voxel.random_world(window.world);
     //voxel.flat_world(window.world, 10);
     window.renderer = new glvoxel.Renderer(window.world);
@@ -60,8 +61,21 @@ function prepareScene(){
     return;
 }
 
+window.cposition = vec3.create();
+window.clposition = vec3.create();
 clock.ontick = function (td) {
     mousecontroller.tick(td);
+    var ray = window.camera.getRay(),
+        scale = window.world.chunk_options.scale;
+    window.ray = ray;
+    vec3.scale(ray, 1.0/scale);
+    var hit = window.world.ray_query(ray, 1024, window.cposition, window.clposition);
+    debug_element.html('<h4>ray</h4>' +
+                            (hit ? 'hit' : 'miss') +
+                            '<br>' + Array.prototype.slice.call(ray).join(',') +
+                            '<br>' + Array.prototype.slice.call(window.cposition).join(',') +
+                            '<br>' + Array.prototype.slice.call(window.clposition).join(',')
+                           );
     graph.draw();
 };
 
