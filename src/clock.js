@@ -7,16 +7,20 @@ var clock = exports,
 clock.Clock = function () {
     this.running = false;
     this.interval = null;
-    this.t0 = new Date();
+    this.t0 = this.now();
     this.t = 0.0;
+    this.maxtd = 0.25;
 };
 clock.Clock.prototype = {
     tick: function () {
-        var t1 = new Date(),
+        var t1 = this.now(),
             td = (t1-this.t0)/1000;
         this.t0 = t1;
         this.t += td;
-        this.ontick(td);
+        // don't tick on frame breaks
+        if(td < this.maxtd){
+            this.ontick(td);
+        }
     },
     start: function (element) {
         this.running = true;
@@ -34,7 +38,7 @@ clock.Clock.prototype = {
                 self.tick();
             }, 1);
         }
-        this.t0 = new Date();
+        this.t0 = this.now();
     },
     stop: function() {
         if(this.interval){
@@ -43,6 +47,9 @@ clock.Clock.prototype = {
         }
         this.running = false;
     },
+    now: function(){
+        return window.performance.now();
+    }, 
     ontick: function() {}
 };
 

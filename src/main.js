@@ -77,8 +77,8 @@ function prepareScene(){
     mousecontroller.camera = camera;
     mousecontroller.velocity = 10;
     gl.clearColor(0.5, 0.6, 0.8, 0.0);
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    //gl.enable(gl.BLEND);
+    //gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     graph.viewportWidth = canvas.width;
     graph.viewportHeight = canvas.height;
     return;
@@ -125,13 +125,13 @@ clock.ontick = function (td) {
             window.world.voxel(window.clposition, 3);
         }
     }
-    debug_element.html('<h4>ray</h4>' +
-                       (hit ? 'hit' : 'miss') +
-                       '<br>' + Array.prototype.slice.call(ray).join(',') +
-                       '<br>' + Array.prototype.slice.call(window.cposition).join(',') +
-                       '<br>' + Array.prototype.slice.call(window.clposition).join(',') +
-                       '<br>' + voxel
-                      );
+    //debug_element.html('<h4>ray</h4>' +
+                       //(hit ? 'hit' : 'miss') +
+                       //'<br>' + Array.prototype.slice.call(ray).join(',') +
+                       //'<br>' + Array.prototype.slice.call(window.cposition).join(',') +
+                       //'<br>' + Array.prototype.slice.call(window.clposition).join(',') +
+                       //'<br>' + voxel
+                      //);
     graph.draw();
 };
 
