@@ -18,7 +18,8 @@ clock.Clock.prototype = {
         this.t0 = t1;
         this.t += td;
         // don't tick on frame breaks
-        if(td < this.maxtd){
+        // don't do zero or negative ticks
+        if(td < this.maxtd && td > 0){
             this.ontick(td);
         }
     },
