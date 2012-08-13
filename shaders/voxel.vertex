@@ -1,5 +1,5 @@
-attribute vec3 normal;
 attribute vec3 position;
+attribute vec3 normal;
 attribute vec3 color;
 
 uniform mat4 modelTransform;

@@ -18,19 +18,32 @@ voxel.Renderer.prototype = {
         var shader = graph.getShader(),
             position = shader.getAttribLocation('position'),
             normal = shader.getAttribLocation('normal'),
-            color = shader.getAttribLocation('color');
+            color = shader.getAttribLocation('color'),
+            update = true;
 
         shader.uniforms(graph.uniforms);
 
         for(var i = 0; i < this.world.chunks.length; i++) {
             var chunk = this.world.chunks[i];
             if(chunk.nonempty_voxels === 0) continue;
-            var vbo = this.buffers[chunk.key];
-            if(!vbo){
-                var mesh = this.generate_mesh(chunk);
+            var mesh = this.buffers[chunk.key];
+            if(!mesh){
+                var buffer = this.generate_mesh(chunk);
                 //console.log(mesh);
-                vbo = this.buffers[chunk.key] = new glutils.VBO(mesh);
+                mesh = this.buffers[chunk.key] = {vbo: new glutils.VBO(buffer), version: chunk.version};
             }
+            else if(mesh.version < chunk.version && update){
+                console.time('free');
+                mesh.vbo.free();
+                console.timeEnd('free');
+                var data = this.generate_mesh(chunk)
+                mesh.vbo = new glutils.VBO(data);
+                console.log('regenerating buffer');
+                mesh.version = chunk.version;
+                // update at most one mesh per frame
+                update = false;
+            }
+            var vbo = mesh.vbo;
 
             vbo.bind();
             var stride = 36;
@@ -49,7 +62,7 @@ voxel.Renderer.prototype = {
         var materials = this.world.materials,
             voxels = chunk.voxels,
             size = chunk.size,
-            scale = chunk.voxel_scale,
+            scale = chunk.scale,
             offset_x = chunk.position[0]*chunk.size*scale,
             offset_y = chunk.position[1]*chunk.size*scale,
             offset_z = chunk.position[2]*chunk.size*scale,

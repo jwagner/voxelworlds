@@ -25,7 +25,7 @@ glUtils.Texture2D.prototype = {
         }
         gl.bindTexture(gl.TEXTURE_2D, this.texture);
     },
-    unbindTexture: function () {
+    unbindTexture: function() { 
         gl.activeTexture(gl.TEXTURE0+this.unit);
         gl.bindTexture(gl.TEXTURE_2D, null);
     },
@@ -41,10 +41,15 @@ glUtils.Texture2D.prototype = {
 };
 
 glUtils.VBO = function VBO(data){
+    console.time('createBuffer');
     this.buffer = gl.createBuffer();
+    console.timeEnd('createBuffer');
     this.bind();
+    console.time('bufferData');
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    console.timeEnd('bufferData');
     this.unbind();
+    console.log(this.length);
     this.length = data.length;
 };
 glUtils.VBO.prototype = {
@@ -56,6 +61,10 @@ glUtils.VBO.prototype = {
     },
     draw: function(mode) {
         gl.drawArrays(mode, 0, this.length/3);
+    },
+    free: function(mode) {
+        gl.deleteBuffer(this.buffer);
+        delete this.buffer;
     }
 };
 

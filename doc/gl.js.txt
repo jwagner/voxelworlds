@@ -1,0 +1,46 @@
+new VBO(data);
+new VBO(data, [
+    {name: 'position', size: 3},
+    {name: 'normal', size: 3},
+    {name: 'uv', size: 2}
+]);
+
+new VBO(data, [
+    {name: 'position', size: 3, start: 0, stride: 0},
+    {name: 'normal', size: 3, start: 0, stride: 0},
+    {name: 'uv', size: 2, start: 0, stride: 0}
+], 'lines');
+
+new gl.Transform({position: vec3.create(...), rotation: vec3.create(), 
+
+
+gl.Model includes transform
+
+
+var scene = new gl.Scene(ctx);
+scene.addObject(new gl.Model({
+        rotation: ...,
+        material: ...,
+        mesh: vbo,
+        aabb: true // auto calculate AABB
+    }))
+    .addObject(new gl.Transform())
+    .addRenderPass(new gl.RenderPass.reflection())
+    .addLight(new gl.Pointlight({color: , position: , falloff: ..)),
+    .addLight(new gl.Direction())
+    .addPostProcess()
+
+scene.camera.
+scene.renderpass.add();
+scene.postprocess.add(new gl.PostProcess())
+                .add(material)
+o
+
+new gl.SimpleScene();
+scene
+    .camera({
+    })
+    .uniforms({
+    })
+    .addModel(),
+    .postprocess([foo, bar, baz]);

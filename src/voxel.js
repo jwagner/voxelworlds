@@ -42,7 +42,12 @@ voxel.World.prototype = {
         {
             name: 'dirt',
             color: [0.7, 0.47, 0.36]
+        },
+        {
+            name: 'stone',
+            color: [0.75, 0.7, 0.7]
         }
+
 
     ],
     init_chunks: function () {
@@ -60,6 +65,34 @@ voxel.World.prototype = {
             }
             this.grid.push(rect);
         }
+    },
+    voxel: function(position, value) {
+        var cs = this.chunk_shift,
+            cm = this.chunk_mask,
+            fx = Math.floor(position[0]),
+            fy = Math.floor(position[1]),
+            fz = Math.floor(position[2]),
+            size = this.chunk_options.size,
+            limit_x = size*this.width,
+            limit_y = size*this.height,
+            limit_z = size*this.depth,
+            // position of chunk in grid
+            gx = fx>>cs, gy = fy>>cs, gz = fz>>cs,
+            // position of voxel in chunk
+            cx = fx&cm, cy = (fy&cm)*size, cz = (fz&cm)*size*size;
+            if(fx < 0 || fx >= limit_x || fy < 0 || fy >= limit_y || fz < 0 || fz >= limit_z) {
+                return -1;
+            }
+            var chunk = this.grid[gx][gy][gz];
+            if(value != null){
+                //debugger;
+                chunk.voxels[cx+cy+cz] = value;
+                chunk.version++;
+                return value;
+            }
+            else {
+                return chunk.voxels[cx+cy+cz];
+            }
     },
     ray_query: function(ray, maxT, location, last_location) {
         var x = ray[0], y = ray[1], z = ray[2],
@@ -149,9 +182,10 @@ voxel.World.prototype = {
                 //TODO: solve this by clipping!
                 continue;
             }
-            var voxel = this.grid[gx][gy][gz].voxels[cs+cy+cz];
+            var voxel = this.grid[gx][gy][gz].voxels[cx+cy+cz];
             if(voxel !== 0){
                 hit = true;
+                //console.log('hit ' + voxel);
                 //console.log('hit');
                 break;
             }
@@ -178,16 +212,17 @@ voxel.Chunk = function (key, x, y, z, options){
     this.voxels = new Uint8Array(this.size*this.size*this.size);
 };
 voxel.Chunk.prototype = {
-    voxel_scale: 0.5,
+    scale: 0.5,
     nonempty_voxels: 0,
     size: 32,
+    version: 0,
     init_aabb: function(x, y, z) {
-        var left = x*this.size*this.voxel_scale,
-            right = left+this.size*this.voxel_scale,
-            bottom = y*this.size*this.voxel_scale,
-            top = bottom+this.size*this.voxel_scale,
-            back = z*this.size*this.voxel_scale,
-            front = back+this.size*this.voxel_scale;
+        var left = x*this.size*this.scale,
+            right = left+this.size*this.scale,
+            bottom = y*this.size*this.scale,
+            top = bottom+this.size*this.scale,
+            back = z*this.size*this.scale,
+            front = back+this.size*this.scale;
         this.aabb = new Float32Array([left, bottom, back, right, top, front]);
     }
 };
@@ -209,6 +244,7 @@ voxel.init_world = function(world, f) {
                 }
             }
         }
+        chunk.version++;
     }
 
 };
@@ -223,7 +259,7 @@ voxel.random_world = function(world) {
     var simplex = new SimplexNoise();
     voxel.init_world(world, function(x, y, z) {
         var density = simplex.noise3D(x/64, y/64, z/64)-y/32;
-        return density > -1.0 ? (density > -0.95 ? 2 : 1) : 0;
+        return density > -1.0 ? (density > -0.92 ? 2 : 1) : 0;
     });
 };
     

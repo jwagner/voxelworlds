@@ -8,6 +8,7 @@
       "alert",
       "console"
     ],
+    "es5": true,
     "browser" : true,
     "node" : true,
     "jquery" : true,

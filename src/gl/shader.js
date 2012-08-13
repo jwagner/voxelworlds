@@ -82,7 +82,7 @@ Shader.prototype = {
                     }
                     // already set
                     if(j == l) {
-                        continue;
+                        //continue;
                     }
                     else {
                         for(j = 0, l = value.length; j < l; j++) {
