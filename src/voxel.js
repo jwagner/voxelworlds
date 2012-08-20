@@ -14,18 +14,16 @@ var SimplexNoise = require('simplex-noise');
 
 voxel.World = function VoxelWorld(options) {
     extend(this, options);
-    this.chunk_shift = Math.log(this.chunk_options.size)/Math.log(2);
-    this.chunk_mask = this.chunk_options.size - 1;
+    this.chunk_shift = Math.log(this.chunk_size)/Math.log(2);
+    this.chunk_mask = this.chunk_size - 1;
+    this.iscale = 1.0/this.scale;
     this.grid = [];
     this.chunks = [];
     this.init_chunks();
 };
 voxel.World.prototype = {
-    chunk_options: {
-        size: 32,
-        // world size scale
-        scale: 0.5
-    },
+    chunk_size: 32,
+    scale: 0.5,
     width: 32,
     depth: 32,
     height: 2,
@@ -57,7 +55,7 @@ voxel.World.prototype = {
             for(var y = 0; y < this.height; y++) {
                 line = [];
                 for(var z = 0; z < this.depth; z++) {
-                    var chunk = new voxel.Chunk(this.key++, x, y, z, this.chunk_options);
+                    var chunk = new voxel.Chunk(this.key++, x, y, z, this.chunk_size, this.scale);
                     line.push(chunk);
                     this.chunks.push(chunk);
                 }
@@ -67,12 +65,14 @@ voxel.World.prototype = {
         }
     },
     voxel: function(position, value) {
-        var cs = this.chunk_shift,
+        var scale = this.scale,
+            iscale = this.iscale,
+            cs = this.chunk_shift,
             cm = this.chunk_mask,
-            fx = Math.floor(position[0]),
-            fy = Math.floor(position[1]),
-            fz = Math.floor(position[2]),
-            size = this.chunk_options.size,
+            fx = Math.floor(position[0]*iscale),
+            fy = Math.floor(position[1]*iscale),
+            fz = Math.floor(position[2]*iscale),
+            size = this.chunk_size,
             limit_x = size*this.width,
             limit_y = size*this.height,
             limit_z = size*this.depth,
@@ -84,18 +84,21 @@ voxel.World.prototype = {
                 return -1;
             }
             var chunk = this.grid[gx][gy][gz];
-            if(value != null){
+            if(value !== undefined){
                 //debugger;
                 chunk.voxels[cx+cy+cz] = value;
                 chunk.version++;
                 return value;
             }
             else {
+                //console.log(cx, cy, cz, iscale, position, cs, cm, gx, gy, gz);
                 return chunk.voxels[cx+cy+cz];
             }
     },
     ray_query: function(ray, maxT, location, last_location) {
-        var x = ray[0], y = ray[1], z = ray[2],
+        var iscale = this.iscale,
+            scale = this.scale,
+            x = ray[0]*iscale, y = ray[1]*iscale, z = ray[2]*iscale,
             // last positions
             dx = ray[3], dy = ray[4], dz = ray[5],
             // the direction of the steps on each axis
@@ -116,7 +119,7 @@ voxel.World.prototype = {
             tx = Math.floor(x+dx*maxT),
             ty = Math.floor(y+dy*maxT),
             tz = Math.floor(z+dz*maxT),
-            size = this.chunk_options.size,
+            size = this.chunk_size,
             limit_x = size*this.width,
             limit_y = size*this.height,
             limit_z = size*this.depth,
@@ -193,20 +196,21 @@ voxel.World.prototype = {
             //console.log('miss');
         }
         if(hit){
-            location[0] = fx;
-            location[1] = fy;
-            location[2] = fz;
-            last_location[0] = lx;
-            last_location[1] = ly;
-            last_location[2] = lz;
+            location[0] = fx*scale;
+            location[1] = fy*scale;
+            location[2] = fz*scale;
+            last_location[0] = lx*scale;
+            last_location[1] = ly*scale;
+            last_location[2] = lz*scale;
         }
         return hit;
     }
 };
 
-voxel.Chunk = function (key, x, y, z, options){
-    extend(this, options);
+voxel.Chunk = function (key, x, y, z, size, scale){
     this.position = vec3.create([x, y, z]);
+    this.size = size || 32;
+    this.scale = scale || 0.5;
     this.key = key;
     this.init_aabb(x, y, z);
     this.voxels = new Uint8Array(this.size*this.size*this.size);

@@ -40,7 +40,7 @@ var loader = new Loader(),
 
 var cube, cube2;
 function prepareScene(){
-    window.world = new voxel.World({width: 8, height: 2, depth: 8, chunk_options: {size: 32, scale: 1.0}});
+    window.world = new voxel.World({width: 8, height: 2, depth: 8, chunk_size: 32, scale: 0.5});
     voxel.random_world(window.world);
     //voxel.flat_world(window.world, 10);
     window.renderer = new glvoxel.Renderer(window.world);
