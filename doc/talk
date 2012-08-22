@@ -1,3 +1,55 @@
+Voxels
+======
+Definition
+    A voxel (volumetric pixel) is a volume element, representing a value on a regular grid in three dimensional space.
+
+History
+| picture            |
+|  |  picture        |
+|  |  | picture      |
+    
+Benefits
+    - A different look and feel
+    - Relatively easy to modify
+        - destruction!
+        - User generated content!
+
+Storage
+    - Regular grid -> Screams array!
+    - Use typed array
+
+Rendering
+    - Mesh per Voxel -> ouch. requires lots of draw() calls, uniform setting etc.
+        - mention 1000 call 'limit'
+        End result is typically 1500-2000 draw calls' http://developer.amd.com/gpu_assets/GDC11_DX11inBF3.pdf
+    - Chunk per Mesh -> better, but still lot's of triangles
+    - Only render outside -> good enough!
+    -> Better triangulation is possible.
+    http://0fps.wordpress.com/2012/07/12/smooth-voxel-terrain-part-2/
+
+    ..Culling:
+
+Collisions (broken voxel? render?)
+    - Spheres? -> Nope door problem
+    - Boxes, maybe -> stairs, corners
+    - border-radius to the rescue!
+    -> capsule
+    But capsule vs. voxel sounds difficult!
+    It's not.
+    Line -> AABB distance
+    Seperate axis
+    Collision resolution -> use distance vector!
+
+Rays and Picking
+    - Let's look at 2D (2D slide...)
+    - Bresenham Line drawing
+    - 3D DDA
+
+(Saving the world)
+Saving Worlds/Compression
+
+
 http://www.mobygames.com/game-group/visual-technique-style-voxel-graphics/offset,0/so,1d/
 
 Capsule for physics -> border-radius
+
