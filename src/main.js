@@ -1,7 +1,6 @@
 define(function(require, exports){
 
 require('jquery');
-require('game-shim');
 
 var Loader = require('loader').Loader,
     Clock = require('clock').Clock,
