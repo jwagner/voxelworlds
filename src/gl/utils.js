@@ -2,6 +2,7 @@ define(function(require, exports, module){
     
 
 require('webgl-debug');
+var $ = require('jquery');
 
 var glUtils = exports;
 
