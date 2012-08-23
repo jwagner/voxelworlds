@@ -85,7 +85,6 @@ voxel.World.prototype = {
             }
             var chunk = this.grid[gx][gy][gz];
             if(value !== undefined){
-                //debugger;
                 chunk.voxels[cx+cy+cz] = value;
                 chunk.version++;
                 return value;

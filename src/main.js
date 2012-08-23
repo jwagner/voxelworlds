@@ -17,6 +17,7 @@ var Loader = require('loader').Loader,
     vec3 = require('gl-matrix').vec3,
     vec4 = require('gl-matrix').vec4,
     mat4 = require('gl-matrix').mat4,
+    Player = require('physics').Player,
     ShaderManager = require('gl/shader').Manager;
 
 
@@ -38,108 +39,6 @@ var loader = new Loader(),
     debug = getHashValue('debug', '0') !== '0',
     debug_element = $('#debug'),
     camera, player;
-
-function Player(position){
-    this.position = vec3.create();
-    this.capsule = new Float32Array(5);
-    this.capsule[4] = 2.0;
-    this.height = 2.0;
-    this.aabb = new Float32Array(6);
-    this.setPosition(position);
-    this.vec3_0 = vec3.create();
-    this.vec3_1 = vec3.create();
-    this.aabb_0 = new Float32Array(6);
-}
-Player.prototype.setPosition = function(position) {
-    vec3.set(position, this.position);
-    this.capsule[0] = this.position[0];
-    this.capsule[1] = this.position[1]-this.height*0.5;
-    this.capsule[2] = this.position[2];
-    this.capsule[3] = this.position[1]+this.height*0.5;
-    this.aabb[0] = Math.floor(this.capsule[0]-this.capsule[4])-1;
-    this.aabb[1] = Math.floor(this.capsule[1]-this.capsule[4])-1;
-    this.aabb[2] = Math.floor(this.capsule[2]-this.capsule[4])-1;
-    this.aabb[3] = Math.ceil(this.capsule[0]+this.capsule[4])+1;
-    this.aabb[4] = Math.ceil(this.capsule[3]+this.capsule[4])+1;
-    this.aabb[5] = Math.ceil(this.capsule[2]+this.capsule[4])+1;
-};
-
-function clipSegmentSegment(a0, a1, b0, b1){
-    // before
-    if(b1 < a0) {
-        return a0-b1;
-    }
-    if(b0 > a1){
-        return a1-b0;
-    }
-    return 0.0;
-}
-function clipSegmentPoint(a0, a1, b0){
-    if(b0 < a0) return a0-b0;
-    if(b0 > a1) return a1-b0;
-    return 0.0;
-}
-function collideAABBYCapsule(aabb, capsule, penetration, min_d){
-    var xd = clipSegmentPoint(aabb[0], aabb[3], capsule[0]),
-        yd = clipSegmentSegment(aabb[1], aabb[4], capsule[1], capsule[3]),
-        zd = clipSegmentPoint(aabb[2], aabb[5], capsule[2]),
-        d2 = xd*xd+yd*yd+zd*zd,
-        r = capsule[4];
-    if(d2 >= min_d[0]){
-        return false;
-    }
-    var d = Math.sqrt(d2),
-        s = (r-d)/r;
-    min_d[0] = d2;
-    penetration[0] = xd/d*(r-d);
-    penetration[1] = yd/d*(r-d);
-    penetration[2] = zd/d*(r-d);
-    return true;
-}
-
-Player.prototype.clipWorld = function(world) {
-    var scale = world.scale,
-        capsule = this.capsule,
-        position = this.vec3_0,
-        penetration = this.vec3_1,
-        aabb = this.aabb_0,
-        min_d = [0], hit = false;
-    for(var i = 0; i < 1000; i++) {
-        min_d[0] = capsule[4]*capsule[4]*0.99;
-        hit = false;
-        for(var x = this.aabb[0]; x < this.aabb[3]; position[0] = (x+=scale)) {
-            for(var y = this.aabb[1]; y < this.aabb[4]; position[1] = (y+=scale)) {
-                for(var z = this.aabb[2]; z < this.aabb[5]; position[2] = (z+=scale)) {
-                    var voxel = world.voxel(position);
-                    if(voxel > 0){
-                        aabb[0] = x;
-                        aabb[1] = y;
-                        aabb[2] = z;
-                        aabb[3] = x+scale;
-                        aabb[4] = y+scale;
-                        aabb[5] = z+scale;
-                        hit = hit || collideAABBYCapsule(aabb, capsule, penetration, min_d);
-                    }
-                }
-            }
-        }
-        if(hit){
-            capsule[0] -= penetration[0]*0.1;
-            capsule[1] -= penetration[1]*0.1;
-            capsule[2] -= penetration[2]*0.1;
-            capsule[3] -= penetration[1]*0.1;
-        }
-        else {
-            break;
-        }
-    }
-    if(i){
-    console.log(i);
-    }
-    this.position[0] = this.capsule[0];
-    this.position[1] = this.capsule[1]+this.height*0.5;
-    this.position[2] = this.capsule[2];
-};
 
 var cube, cube2;
 function prepareScene(){
@@ -177,7 +76,8 @@ function prepareScene(){
     camera.position[0] = 4*32*0.5;
     camera.position[1] = 3*32*0.5;
     camera.position[2] = 8*32*0.5;
-    player = new Player(camera.position);
+    player = new Player(window.world);
+    player.setPosition(camera.position);
     camera.pitch = Math.PI*0.25;
     graph.root.append(globals);
     mousecontroller.camera = camera;
@@ -206,16 +106,16 @@ var vel = 0.0;
 clock.ontick = function (td) {
     mousecontroller.tick(td);
 
+    player.acceleration = vec3.scale(vec3.subtract(camera.position, player.position, vec3.create()), 1.0/td);
+
     if(input.keys.SPACE){
-        camera.position[1] += 1*td;
+        player.acceleration[1] += 20;
     }
-    else {
-        camera.position[1] -= 0.1*td;
-    }
+    player.acceleration[1] -= 10;
 
-    player.setPosition(camera.position);
+    vec3.scale(player.velocity, 0.99);
 
-    player.clipWorld(window.world);
+    player.tick(td);
     vec3.set(player.position, camera.position);
 
     var ray = window.camera.getRay(),
