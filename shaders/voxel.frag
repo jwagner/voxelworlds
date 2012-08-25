@@ -9,9 +9,11 @@ varying vec3 vColor;
 varying vec3 vNormal;
 
 uniform vec3 sunDirection;
+uniform vec3 eye;
 
 void main(){
     float light = max(dot(vNormal, sunDirection), 0.0)*0.8+0.2;
+    vec3 view = vPosition-eye;
     vec3 shaded = vColor*light;
-    gl_FragColor = vec4(shaded, 1.0);
+    gl_FragColor = vec4(shaded, length(view));
 }

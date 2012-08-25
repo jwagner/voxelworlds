@@ -1,0 +1,20 @@
+attribute vec3 position;
+uniform vec2 size;
+uniform vec2 direction;
+varying vec2 uv0, uv1, uv2, uv3, uv4, uv5, uv6, uv7, uv8;
+
+void main(){
+    vec2 screenPosition = (vec2(position)+vec2(1.0))*0.5;
+    vec2 pixel = direction*(1.0/size.x);
+    uv0 = screenPosition - pixel * 4.0;
+    uv1 = screenPosition - pixel * 3.0;
+    uv2 = screenPosition - pixel * 2.0;
+    uv3 = screenPosition - pixel;
+    uv4 = screenPosition;
+    uv5 = screenPosition + pixel;
+    uv6 = screenPosition + pixel * 2.0;
+    uv7 = screenPosition + pixel * 3.0;
+    uv8 = screenPosition + pixel * 4.0;
+    gl_Position = vec4(position, 1.0);
+
+}

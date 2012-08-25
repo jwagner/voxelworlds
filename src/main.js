@@ -10,9 +10,11 @@ var Loader = require('loader').Loader,
     scene = require('gl/scene'),
     mesh = require('gl/mesh'),
     glutils = require('gl/utils'),
+    FBO = require('gl/utils').FBO,
     glvoxel = require('gl/voxel'),
     voxel = require('voxel'),
     getHashValue = require('utils').getHashValue,
+    vec2 = require('gl-matrix').vec2,
     vec3 = require('gl-matrix').vec3,
     vec4 = require('gl-matrix').vec4,
     mat4 = require('gl-matrix').mat4,
@@ -23,6 +25,10 @@ var Loader = require('loader').Loader,
 var RESOURCES = [
     'shaders/voxel.vertex',
     'shaders/voxel.frag',
+    'shaders/blur.vertex',
+    'shaders/blur.frag',
+    'shaders/postprocess.vertex',
+    'shaders/tonemap.frag',
     'shaders/solid.vertex',
     'shaders/solid.frag'
 ];
@@ -46,6 +52,10 @@ function prepareScene(){
     //voxel.flat_world(window.world, 10);
     window.renderer = new glvoxel.Renderer(window.world);
 
+    var albedoFBO = new FBO(canvas.width, canvas.height, gl.FLOAT),
+        blurFBO0 = new FBO(canvas.width>>1, canvas.height>>1, gl.FLOAT),
+        blurFBO1 = new FBO(canvas.width>>1, canvas.height>>1, gl.FLOAT);
+
     cube = new scene.Transform([
         new scene.Material(shaders.get('solid'), {color: vec4.create([0.5, 0.0, 0.0, 0.5])}, [
             new scene.SimpleMesh(new glUtils.VBO(mesh.cube(-0.5)))])
@@ -62,8 +72,28 @@ function prepareScene(){
         ]);
 
     camera = new scene.Camera([
-        shader,
-        cube,
+        new scene.RenderTarget(albedoFBO, [
+            shader,
+            cube
+        ]),
+        new scene.RenderTarget(blurFBO0, [
+            new scene.Postprocess(shaders.get('blur.vertex', 'blur.frag'), {
+                texture: albedoFBO,
+                direction: vec2.create([1, 0]),
+                size: vec2.create([canvas.width, canvas.height])
+            })
+        ]),
+        new scene.RenderTarget(blurFBO1, [
+            new scene.Postprocess(shaders.get('blur.vertex', 'blur.frag'), {
+                texture: blurFBO0,
+                direction: vec2.create([0, 1]),
+                size: vec2.create([canvas.width, canvas.height])
+            })
+        ]),
+        new scene.Postprocess(shaders.get('postprocess.vertex', 'tonemap.frag'), {
+            texture: blurFBO1,
+            albedo: albedoFBO
+        }),
         //cube2
     ]);
 
