@@ -64,7 +64,7 @@ CapsuleY.prototype.collideAABB = function(aabb) {
     var yd = clipSegmentSegment(aabb.y0, aabb.y1, this.y0, this.y1);
     var zd = clipSegmentPoint(aabb.z0, aabb.z1, this.z);
     var d2 = xd*xd + yd*yd + zd*zd;
-    if(d2 >= this.radius*this.radius){
+    if(d2 >= this.radius*this.radius*0.99){
         return null;
     }
     var d = Math.sqrt(d2);
@@ -76,7 +76,7 @@ CapsuleY.prototype.collideAABB = function(aabb) {
 }; 
 
 function Player(world) {
-    this.shape = new CapsuleY(0, 0, 0, 1.0, 1.0);
+    this.shape = new CapsuleY(0, 0, 0, 1.0, 0.75);
     this.world = world;
     this.aabb = new AABB();
     this.position = vec3.create();
@@ -100,12 +100,12 @@ Player.prototype.tick = function(td) {
     // prepare AABB
     this.shape.setPosition(this.position[0], this.position[1], this.position[2]);
     this.shape.updateAABB(aabb);
-    this.aabb.x0 -= this.aabb.x0%scale;
-    this.aabb.y0 -= this.aabb.y0%scale;
-    this.aabb.z0 -= this.aabb.z0%scale;
-    this.aabb.x1 += (scale-this.aabb.x1%scale);
-    this.aabb.y1 += (scale-this.aabb.y1%scale);
-    this.aabb.z1 += (scale-this.aabb.z1%scale);
+    this.aabb.x0 -= this.aabb.x0%scale+scale;
+    this.aabb.y0 -= this.aabb.y0%scale+scale;
+    this.aabb.z0 -= this.aabb.z0%scale+scale;
+    this.aabb.x1 += (scale-this.aabb.x1%scale)+scale;
+    this.aabb.y1 += (scale-this.aabb.y1%scale)+scale;
+    this.aabb.z1 += (scale-this.aabb.z1%scale)+scale;
 
     var voxels = [];
     for(var x = aabb.x0; x < aabb.x1; x+=scale) {
@@ -127,6 +127,7 @@ Player.prototype.tick = function(td) {
 
     var penetration = vec3.create(),
         contact = null, maxContact = null;
+    // this is pretty excessive, but it gives quite smooth results
     for(var iterations = 0; iterations < 100; iterations++) {
         for(var i = 0; i < voxels.length; i++) {
             voxel = voxels[i];
@@ -136,7 +137,7 @@ Player.prototype.tick = function(td) {
             }
         }
         if(maxContact !== null){
-            this.shape.translate(maxContact.resolution);
+            this.shape.translate(vec3.scale(maxContact.resolution, 0.1));
             maxContact = null;
         }
         else {

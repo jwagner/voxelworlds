@@ -261,7 +261,7 @@ voxel.flat_world = function(world, height){
 voxel.random_world = function(world) {
     var simplex = new SimplexNoise();
     voxel.init_world(world, function(x, y, z) {
-        var density = simplex.noise3D(x/64, y/64, z/64)-y/32;
+        var density = simplex.noise3D(x/64, y/64, z/64)-y/64;
         return density > -1.0 ? (density > -0.92 ? 2 : 1) : 0;
     });
 };

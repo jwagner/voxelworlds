@@ -1,8 +1,7 @@
 define(function(require, exports, module){
     
 var clock = exports,
-    requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame,
-    now = window.performance && window.performance.now ? function(){return window.performance.now();} : function() {return new Date();};
+    requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
 
 
 clock.Clock = function () {
@@ -50,7 +49,7 @@ clock.Clock.prototype = {
         this.running = false;
     },
     now: function(){
-        return now();
+        return window.performance.now();
     }, 
     ontick: function() {}
 };

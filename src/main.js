@@ -41,7 +41,7 @@ var loader = new Loader(),
 
 var cube, cube2;
 function prepareScene(){
-    window.world = new voxel.World({width: 8, height: 2, depth: 8, chunk_size: 32, scale: 0.5});
+    window.world = new voxel.World({width: 8, height: 4, depth: 8, chunk_size: 32, scale: 0.5});
     voxel.random_world(window.world);
     //voxel.flat_world(window.world, 10);
     window.renderer = new glvoxel.Renderer(window.world);
@@ -80,7 +80,7 @@ function prepareScene(){
     camera.pitch = Math.PI*0.25;
     graph.root.append(globals);
     mousecontroller.camera = camera;
-    mousecontroller.velocity = 5;
+    mousecontroller.velocity = 20;
     gl.clearColor(0.5, 0.6, 0.8, 0.0);
     //gl.enable(gl.BLEND);
     //gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -114,7 +114,8 @@ clock.ontick = function (td) {
 
     vec3.scale(player.velocity, 0.99);
 
-    player.tick(td);
+    player.tick(td*0.5);
+    player.tick(td*0.5);
     vec3.set(player.position, camera.position);
 
     var ray = window.camera.getRay(),
@@ -129,7 +130,7 @@ clock.ontick = function (td) {
         mat4.identity(cube.matrix);
         mat4.translate(cube.matrix, vec3.add(window.clposition, [0.25, 0.25, 0.25]));
         mat4.scale(cube.matrix, vec3.create([0.5, 0.5, 0.5]));
-        if(delete_block) {
+        if(input.keys.Q) {
             delete_block = false;
             window.world.voxel(window.cposition, 0);
         }
@@ -148,7 +149,7 @@ clock.ontick = function (td) {
     graph.draw();
 };
 
-if(glUtils.getContext(canvas, {}, {debug: debug}) == null){
+if(glUtils.getContext(canvas, {}, {debug: debug, texture_float: true}) == null){
     //return;
 }
 
