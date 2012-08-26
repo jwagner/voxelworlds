@@ -53,8 +53,10 @@ function prepareScene(){
     window.renderer = new glvoxel.Renderer(window.world);
 
     var albedoFBO = new FBO(canvas.width, canvas.height, gl.FLOAT),
-        blurFBO0 = new FBO(canvas.width>>2, canvas.height>>2, gl.FLOAT),
-        blurFBO1 = new FBO(canvas.width>>2, canvas.height>>2, gl.FLOAT);
+        blurFBO0 = new FBO(canvas.width>>1, canvas.height>>1, gl.FLOAT),
+        blurFBO1 = new FBO(canvas.width>>1, canvas.height>>1, gl.FLOAT),
+        blurFBO2 = new FBO(canvas.width>>2, canvas.height>>2, gl.FLOAT),
+        blurFBO3 = new FBO(canvas.width>>2, canvas.height>>2, gl.FLOAT);
 
     cube = new scene.Transform([
         new scene.Material(shaders.get('solid'), {color: vec4.create([0.5, 0.0, 0.0, 0.5])}, [
@@ -87,11 +89,26 @@ function prepareScene(){
             new scene.Postprocess(shaders.get('blur.vertex', 'blur.frag'), {
                 texture: blurFBO0,
                 direction: vec2.create([0, 1]),
-                size: vec2.create([canvas.width, canvas.height])
+                size: vec2.create([canvas.width>>1, canvas.height>>1])
+            })
+        ]),
+        new scene.RenderTarget(blurFBO2, [
+            new scene.Postprocess(shaders.get('blur.vertex', 'blur.frag'), {
+                texture: blurFBO1,
+                direction: vec2.create([1, 0]),
+                size: vec2.create([canvas.width>>1, canvas.height>>1])
+            })
+        ]),
+        new scene.RenderTarget(blurFBO3, [
+            new scene.Postprocess(shaders.get('blur.vertex', 'blur.frag'), {
+                texture: blurFBO2,
+                direction: vec2.create([0, 1]),
+                size: vec2.create([canvas.width>>2, canvas.height>>2])
             })
         ]),
         new scene.Postprocess(shaders.get('postprocess.vertex', 'tonemap.frag'), {
-            texture: blurFBO1,
+            blur0: blurFBO1,
+            blur1: blurFBO3,
             albedo: albedoFBO
         }),
         //cube2
