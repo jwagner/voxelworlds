@@ -53,8 +53,8 @@ function prepareScene(){
     window.renderer = new glvoxel.Renderer(window.world);
 
     var albedoFBO = new FBO(canvas.width, canvas.height, gl.FLOAT),
-        blurFBO0 = new FBO(canvas.width>>1, canvas.height>>1, gl.FLOAT),
-        blurFBO1 = new FBO(canvas.width>>1, canvas.height>>1, gl.FLOAT);
+        blurFBO0 = new FBO(canvas.width>>2, canvas.height>>2, gl.FLOAT),
+        blurFBO1 = new FBO(canvas.width>>2, canvas.height>>2, gl.FLOAT);
 
     cube = new scene.Transform([
         new scene.Material(shaders.get('solid'), {color: vec4.create([0.5, 0.0, 0.0, 0.5])}, [
@@ -111,7 +111,7 @@ function prepareScene(){
     graph.root.append(globals);
     mousecontroller.camera = camera;
     mousecontroller.velocity = 20;
-    gl.clearColor(0.5, 0.6, 0.8, 0.0);
+    gl.clearColor(0.5, 0.6, 0.8, 20000.0);
     //gl.enable(gl.BLEND);
     //gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     graph.viewportWidth = canvas.width;
