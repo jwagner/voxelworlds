@@ -74,7 +74,7 @@ function prepareScene(){
     camera = new scene.Camera([
         new scene.RenderTarget(albedoFBO, [
             shader,
-            cube
+            //cube
         ]),
         new scene.RenderTarget(blurFBO0, [
             new scene.Postprocess(shaders.get('blur.vertex', 'blur.frag'), {
