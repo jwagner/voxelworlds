@@ -53,8 +53,8 @@ function prepareScene(){
     window.renderer = new glvoxel.Renderer(window.world);
 
     var albedoFBO = new FBO(canvas.width, canvas.height, gl.FLOAT),
-        blurFBO0 = new FBO(canvas.width>>1, canvas.height>>1, gl.FLOAT),
-        blurFBO1 = new FBO(canvas.width>>1, canvas.height>>1, gl.FLOAT),
+        blurFBO0 = new FBO(canvas.width, canvas.height, gl.FLOAT),
+        blurFBO1 = new FBO(canvas.width, canvas.height, gl.FLOAT),
         blurFBO2 = new FBO(canvas.width>>2, canvas.height>>2, gl.FLOAT),
         blurFBO3 = new FBO(canvas.width>>2, canvas.height>>2, gl.FLOAT);
 
@@ -82,28 +82,28 @@ function prepareScene(){
             new scene.Postprocess(shaders.get('blur.vertex', 'blur.frag'), {
                 texture: albedoFBO,
                 direction: vec2.create([1, 0]),
-                size: vec2.create([canvas.width, canvas.height])
+                size: vec2.create([albedoFBO.width, albedoFBO.height])
             })
         ]),
         new scene.RenderTarget(blurFBO1, [
             new scene.Postprocess(shaders.get('blur.vertex', 'blur.frag'), {
                 texture: blurFBO0,
                 direction: vec2.create([0, 1]),
-                size: vec2.create([canvas.width>>1, canvas.height>>1])
+                size: vec2.create([blurFBO0.width, blurFBO0.height])
             })
         ]),
         new scene.RenderTarget(blurFBO2, [
             new scene.Postprocess(shaders.get('blur.vertex', 'blur.frag'), {
                 texture: blurFBO1,
                 direction: vec2.create([1, 0]),
-                size: vec2.create([canvas.width>>1, canvas.height>>1])
+                size: vec2.create([blurFBO1.height, blurFBO1.width])
             })
         ]),
         new scene.RenderTarget(blurFBO3, [
             new scene.Postprocess(shaders.get('blur.vertex', 'blur.frag'), {
                 texture: blurFBO2,
                 direction: vec2.create([0, 1]),
-                size: vec2.create([canvas.width>>2, canvas.height>>2])
+                size: vec2.create([blurFBO2.width, blurFBO2.height])
             })
         ]),
         new scene.Postprocess(shaders.get('postprocess.vertex', 'tonemap.frag'), {
@@ -128,7 +128,7 @@ function prepareScene(){
     graph.root.append(globals);
     mousecontroller.camera = camera;
     mousecontroller.velocity = 20;
-    gl.clearColor(0.5, 0.6, 0.8, 20000.0);
+    gl.clearColor(0.5, 0.6, 0.8, 1.0);
     //gl.enable(gl.BLEND);
     //gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     graph.viewportWidth = canvas.width;
