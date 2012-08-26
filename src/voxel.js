@@ -35,11 +35,11 @@ voxel.World.prototype = {
         },
         {
             name: 'grass',
-            color: [0.58, 0.78, 0.37]
+            color: [0.28, 0.98, 0.17]
         },
         {
             name: 'dirt',
-            color: [0.7, 0.47, 0.36]
+            color: [0.98, 0.57, 0.26]
         },
         {
             name: 'stone',

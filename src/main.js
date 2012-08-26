@@ -76,7 +76,7 @@ function prepareScene(){
     camera = new scene.Camera([
         new scene.RenderTarget(albedoFBO, [
             shader,
-            //cube
+            cube
         ]),
         new scene.RenderTarget(blurFBO0, [
             new scene.Postprocess(shaders.get('blur.vertex', 'blur.frag'), {
@@ -128,7 +128,7 @@ function prepareScene(){
     graph.root.append(globals);
     mousecontroller.camera = camera;
     mousecontroller.velocity = 20;
-    gl.clearColor(0.5, 0.6, 0.8, 1.0);
+    gl.clearColor(0.1, 0.5, 0.98, 1.0);
     //gl.enable(gl.BLEND);
     //gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     graph.viewportWidth = canvas.width;
