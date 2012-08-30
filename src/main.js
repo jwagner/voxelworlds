@@ -47,7 +47,7 @@ var loader = new Loader(),
 
 var cube, cube2;
 function prepareScene(){
-    window.world = new voxel.World({width: 8, height: 4, depth: 8, chunk_size: 32, scale: 0.5});
+    window.world = new voxel.World({width: 16, height: 4, depth: 16, chunk_size: 32, scale: 0.5});
     voxel.random_world(window.world);
     //voxel.flat_world(window.world, 10);
     window.renderer = new glvoxel.Renderer(window.world);
@@ -157,7 +157,7 @@ clock.ontick = function (td) {
     if(input.keys.SPACE){
         player.acceleration[1] += 20;
     }
-    player.acceleration[1] -= 10;
+    //player.acceleration[1] -= 10;
 
     vec3.scale(player.velocity, 0.99);
 
@@ -195,6 +195,8 @@ clock.ontick = function (td) {
                       //);
     graph.draw();
 };
+
+window.URL = window.URL || window.webkitURL;
 
 if(glUtils.getContext(canvas, {}, {debug: debug, texture_float: true}) == null){
     //return;
