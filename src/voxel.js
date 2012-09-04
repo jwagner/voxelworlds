@@ -10,7 +10,8 @@ var voxel = exports,
     vec3 = require('gl-matrix').vec3,
     extend = require('./utils').extend;
 
-var SimplexNoise = require('simplex-noise');
+var SimplexNoise = require('simplex-noise'),
+    Alea = require('alea');
 
 voxel.World = function VoxelWorld(options) {
     extend(this, options);
@@ -35,27 +36,30 @@ voxel.World.prototype = {
         },
         {
             name: 'grass',
-            color: [0.28, 0.98, 0.17]
+            color: [0.28*255, 0.98*255, 0.17*255]
         },
         {
             name: 'dirt',
-            color: [0.98, 0.57, 0.26]
+            color: [0.98*255, 0.57*255, 0.26*255]
         },
         {
             name: 'stone',
-            color: [0.75, 0.7, 0.7]
+            color: [0.75*255, 0.7*255, 0.7*255]
         }
 
 
     ],
     init_chunks: function () {
-        var rect, line;
+        var rect, line,
+            size = this.chunk_size,
+            scale = this.scale;
         for(var x = 0; x < this.width; x++) {
             rect = [];
             for(var y = 0; y < this.height; y++) {
                 line = [];
                 for(var z = 0; z < this.depth; z++) {
-                    var chunk = new voxel.Chunk(this.key++, x, y, z, this.chunk_size, this.scale);
+                    var position = vec3.create([x*size*scale, y*size*scale, z*size*scale]);
+                    var chunk = new voxel.Chunk(this.key++, position, size, scale);
                     line.push(chunk);
                     this.chunks.push(chunk);
                 }
@@ -206,12 +210,12 @@ voxel.World.prototype = {
     }
 };
 
-voxel.Chunk = function (key, x, y, z, size, scale){
-    this.position = vec3.create([x, y, z]);
+voxel.Chunk = function (key, position, size, scale){
+    this.position = position;
     this.size = size || 32;
     this.scale = scale || 0.5;
     this.key = key;
-    this.init_aabb(x, y, z);
+    this.init_aabb();
     this.voxels = new Uint8Array(this.size*this.size*this.size);
 };
 voxel.Chunk.prototype = {
@@ -219,18 +223,19 @@ voxel.Chunk.prototype = {
     nonempty_voxels: 0,
     size: 32,
     version: 0,
-    init_aabb: function(x, y, z) {
-        var left = x*this.size*this.scale,
+    init_aabb: function() {
+        var left = this.position[0],
             right = left+this.size*this.scale,
-            bottom = y*this.size*this.scale,
+            bottom = this.position[1],
             top = bottom+this.size*this.scale,
-            back = z*this.size*this.scale,
+            back = this.position[2],
             front = back+this.size*this.scale;
         this.aabb = new Float32Array([left, bottom, back, right, top, front]);
     }
 };
 
 voxel.init_world = function(world, f) {
+    var scale = world.scale;
     for(var i = 0; i < world.chunks.length; i++) {
         var chunk = world.chunks[i];
         for(var x = 0; x < chunk.size; x++) {
@@ -238,9 +243,9 @@ voxel.init_world = function(world, f) {
                 for(var z = 0; z < chunk.size; z++) {
                     var j = x+y*chunk.size+z*chunk.size*chunk.size,
                         m = chunk.voxels[j],
-                        n = f((chunk.position[0]*chunk.size+x),
-                              (chunk.position[1]*chunk.size+y),
-                              (chunk.position[2]*chunk.size+z));
+                        n = f((chunk.position[0]+x*scale),
+                              (chunk.position[1]+y*scale),
+                              (chunk.position[2]+z*scale));
 
                     chunk.voxels[j] = n;
                     chunk.nonempty_voxels += Math.min(n, 1) - Math.min(m, 1);
@@ -258,11 +263,21 @@ voxel.flat_world = function(world, height){
     });
 };
 
-voxel.random_world = function(world) {
-    var simplex = new SimplexNoise();
+voxel.random_world = function(world, seed) {
+    var random = new Alea(seed);
+    var simplex = new SimplexNoise(random);
     voxel.init_world(world, function(x, y, z) {
-        var density = simplex.noise3D(x/64, y/64, z/64)-y/64;
-        return density > -1.0 ? (density > -0.92 ? 2 : 1) : 0;
+        var density = simplex.noise3D(x/32, y/32, z/32)-y/15;
+        if(density > -0.75){
+            return 3;
+        }
+        if(density > -0.92){
+            return 2;
+        }
+        if(density > -1.0){
+            return 1.0;
+        }
+        return 0.0;
     });
 };
     
