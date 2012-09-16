@@ -488,8 +488,8 @@ voxel.Renderer.prototype = {
                 }
             }
         }
-        if(m===0) return new Float32Array();
-        return new Float32Array(mesh.buffer.slice(0, m*4));
+        if(m===0) return new Uint8Array();
+        return new Uint8Array(mesh.buffer.slice(0, m));
     } 
 
 };
