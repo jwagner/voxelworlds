@@ -68,6 +68,10 @@ voxel.World.prototype = {
             this.grid.push(rect);
         }
     },
+    // in voxel coordinates, not world
+    light: function(x, y, z) {
+    },
+    // in world coordinates
     voxel: function(position, value) {
         var scale = this.scale,
             iscale = this.iscale,
@@ -79,14 +83,14 @@ voxel.World.prototype = {
             size = this.chunk_size,
             limit_x = size*this.width,
             limit_y = size*this.height,
-            limit_z = size*this.depth,
+            limit_z = size*this.depth;
             // position of chunk in grid
-            gx = fx>>cs, gy = fy>>cs, gz = fz>>cs,
             // position of voxel in chunk
-            cx = fx&cm, cy = (fy&cm)*size, cz = (fz&cm)*size*size;
             if(fx < 0 || fx >= limit_x || fy < 0 || fy >= limit_y || fz < 0 || fz >= limit_z) {
                 return -1;
             }
+            var gx = fx>>cs, gy = fy>>cs, gz = fz>>cs,
+                cx = fx&cm, cy = (fy&cm)*size, cz = (fz&cm)*size*size;
             var chunk = this.grid[gx][gy][gz];
             if(value !== undefined){
                 chunk.voxels[cx+cy+cz] = value;
@@ -249,7 +253,7 @@ voxel.init_world = function(world, f) {
                               (chunk.position[2]+z*scale));
 
                     chunk.voxels[j] = n;
-                    chunk.light[j] = chunk.position[1]+y*scale;
+                    chunk.light[j] = n === 0 ? chunk.position[1]+y*scale : 0;
                     chunk.nonempty_voxels += Math.min(n, 1) - Math.min(m, 1);
                 }
             }
