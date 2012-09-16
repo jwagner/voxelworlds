@@ -217,6 +217,7 @@ voxel.Chunk = function (key, position, size, scale){
     this.key = key;
     this.init_aabb();
     this.voxels = new Uint8Array(this.size*this.size*this.size);
+    this.light = new Uint8Array(this.size*this.size*this.size);
 };
 voxel.Chunk.prototype = {
     scale: 0.5,
@@ -248,6 +249,7 @@ voxel.init_world = function(world, f) {
                               (chunk.position[2]+z*scale));
 
                     chunk.voxels[j] = n;
+                    chunk.light[j] = chunk.position[1]+y*scale;
                     chunk.nonempty_voxels += Math.min(n, 1) - Math.min(m, 1);
                 }
             }

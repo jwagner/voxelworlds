@@ -19,6 +19,7 @@ voxel.Renderer.prototype = {
             position = shader.getAttribLocation('position'),
             normal = shader.getAttribLocation('normal'),
             color = shader.getAttribLocation('color'),
+            ambient = shader.getAttribLocation('ambient'),
             update = true;
 
         graph.pushUniforms();
@@ -50,14 +51,16 @@ voxel.Renderer.prototype = {
             shader.uniforms(graph.uniforms);
 
             vbo.bind();
-            var stride = 9;
+            var stride = 10;
             gl.enableVertexAttribArray(position);
             gl.vertexAttribPointer(position, 3, gl.UNSIGNED_BYTE, false, stride, 0);
             gl.enableVertexAttribArray(normal);
             gl.vertexAttribPointer(normal, 3, gl.BYTE, false, stride, 3);
             gl.enableVertexAttribArray(color);
             gl.vertexAttribPointer(color, 3, gl.UNSIGNED_BYTE, false, stride, 6);
-            gl.drawArrays(gl.TRIANGLES, 0, vbo.length/9);
+            gl.enableVertexAttribArray(ambient);
+            gl.vertexAttribPointer(ambient, 1, gl.UNSIGNED_BYTE, false, stride, 9);
+            gl.drawArrays(gl.TRIANGLES, 0, vbo.length/stride);
             vbo.unbind();
             // render chunk
         }
@@ -66,6 +69,7 @@ voxel.Renderer.prototype = {
     generate_mesh: function(chunk){
         var materials = this.world.materials,
             voxels = chunk.voxels,
+            light = chunk.light,
             size = chunk.size,
             scale = 1,
             mesh,
@@ -74,7 +78,7 @@ voxel.Renderer.prototype = {
         if(this._mesh_generation_buffer === null){
             //console.log('allocating buffer');
             this._mesh_generation_buffer = new Uint8Array(
-                9 * // floats per vertex
+                10 * // floats per vertex
                 6 * // vertices per side
                 6 * // sides per voxel
                 size * size * size * // voxels per chunk
@@ -95,6 +99,7 @@ voxel.Renderer.prototype = {
                         voxel = voxels[i];
                     if(voxel === 0) continue;
                     var material = materials[voxel],
+                        ambient = light[i],
                         color = material.color,
                         r = color[0],
                         g = color[1],
@@ -112,6 +117,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox);
                         mesh[m++]=(oy+scale);
@@ -122,6 +128,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox+scale);
                         mesh[m++]=(oy+scale);
@@ -132,6 +139,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
 
                         mesh[m++]=(ox+scale);
@@ -143,6 +151,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox);
                         mesh[m++]=(oy+scale);
@@ -153,6 +162,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox+scale);
                         mesh[m++]=(oy+scale);
@@ -163,6 +173,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                     }
 
@@ -177,6 +188,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox);
                         mesh[m++]=(oy);
@@ -187,6 +199,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox);
                         mesh[m++]=(oy);
@@ -197,6 +210,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
 
                         mesh[m++]=(ox+scale);
@@ -208,6 +222,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox+scale);
                         mesh[m++]=(oy);
@@ -218,6 +233,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox);
                         mesh[m++]=(oy);
@@ -228,6 +244,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
                     }
 
                     // left
@@ -241,6 +258,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox);
                         mesh[m++]=(oy);
@@ -251,6 +269,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox);
                         mesh[m++]=(oy);
@@ -261,6 +280,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
 
                         mesh[m++]=(ox);
@@ -272,6 +292,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox);
                         mesh[m++]=(oy);
@@ -282,6 +303,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox);
                         mesh[m++]=(oy+scale);
@@ -292,6 +314,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
                     }
 
                     // right
@@ -305,6 +328,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox+scale);
                         mesh[m++]=(oy);
@@ -315,6 +339,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox+scale);
                         mesh[m++]=(oy);
@@ -325,6 +350,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
 
                         mesh[m++]=(ox+scale);
@@ -336,6 +362,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox+scale);
                         mesh[m++]=(oy+scale);
@@ -346,6 +373,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox+scale);
                         mesh[m++]=(oy);
@@ -356,6 +384,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
                     }
 
                     // front
@@ -369,6 +398,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox);
                         mesh[m++]=(oy);
@@ -379,6 +409,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox+scale);
                         mesh[m++]=(oy);
@@ -389,6 +420,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
 
                         mesh[m++]=(ox);
@@ -400,6 +432,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox+scale);
                         mesh[m++]=(oy);
@@ -410,6 +443,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox+scale);
                         mesh[m++]=(oy+scale);
@@ -420,6 +454,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
                     }
 
                     // back
@@ -433,6 +468,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox);
                         mesh[m++]=(oy+scale);
@@ -443,6 +479,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox+scale);
                         mesh[m++]=(oy);
@@ -453,6 +490,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
 
                         mesh[m++]=(ox+scale);
@@ -464,6 +502,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox);
                         mesh[m++]=(oy+scale);
@@ -474,6 +513,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
 
                         mesh[m++]=(ox+scale);
                         mesh[m++]=(oy+scale);
@@ -484,6 +524,7 @@ voxel.Renderer.prototype = {
                         mesh[m++]=(r);
                         mesh[m++]=(g);
                         mesh[m++]=(b);
+                        mesh[m++]=ambient;
                     }
                 }
             }

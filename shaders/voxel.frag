@@ -7,12 +7,13 @@ precision mediump float;
 varying vec3 vPosition;
 varying vec3 vColor;
 varying vec3 vNormal;
+varying float vAmbient;
 
 uniform vec3 sunDirection;
 uniform vec3 eye;
 
 void main(){
-    float light = max(dot(vNormal, sunDirection), 0.0)*0.8+0.2;
+    float light = max(dot(vNormal, sunDirection), 0.0)*0.8*vAmbient*0.025;
     vec3 view = vPosition-eye;
     vec3 shaded = vColor*light;
     gl_FragColor = vec4(shaded, length(view));
