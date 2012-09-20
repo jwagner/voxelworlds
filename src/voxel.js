@@ -45,6 +45,14 @@ voxel.World.prototype = {
         {
             name: 'stone',
             color: [0.75*255, 0.7*255, 0.7*255]
+        },
+        {
+            name: 'detail',
+            color: [0.0*255, 0.0*255, 0.1*255]
+        },
+        {
+            name: 'detail2',
+            color: [255, 0, 0]
         }
 
 
@@ -278,19 +286,30 @@ voxel.random_world = function(world, seed) {
     voxel.init_world(world, function(x, y, z) {
             
         var xd = x-w*0.25,
-            yd = y-h*0.25,
-            zd = z-d*0.25,
-            distance = Math.sqrt(xd*xd+yd*yd*yd+zd*zd)*0.05;
+            yd = y-h*0.20,
+            zd = z-d*0.25;
+        if(yd > 0) yd *= yd*0.05;
+        var xz = simplex.noise2D(x, z);
+        var distance = (xd*xd+yd*yd*32+zd*zd)*0.0004,
             density = simplex.noise3D(x/32, y/32, z/32)-distance;
         if(density > -0.75){
             return 3;
         }
-        if(density > -0.92){
+        if(density > -0.85){
             return 2;
         }
         if(density > -1.0){
-            return 1.0;
+            return y > 32+xz*4 ? 1.0 : 2;
         }
+        var density0 = simplex.noise3D(x/32, 32, z/32);
+            if(density0-xd*xd*0.005 > -1.0 && y > 32 && y*0.01 < simplex.noise2D(x/4, z/4)*simplex.noise2D(x/32, z/32)){
+            return y > 48+xz*16 ? 5 : 4;
+        }
+
+        if(density > -0.50-y*0.01+simplex.noise2D(x/4, z/4)*simplex.noise2D(x/32+5, z/32+5)){
+            return 3;
+        }
+
         return 0.0;
     });
 };
