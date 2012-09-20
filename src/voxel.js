@@ -270,10 +270,18 @@ voxel.flat_world = function(world, height){
 };
 
 voxel.random_world = function(world, seed) {
-    var random = new Alea(seed);
-    var simplex = new SimplexNoise(random);
+    var random = new Alea(seed),
+        simplex = new SimplexNoise(random),
+        w = world.width*world.chunk_size,
+        h = world.height*world.chunk_size,
+        d = world.depth*world.chunk_size;
     voxel.init_world(world, function(x, y, z) {
-        var density = simplex.noise3D(x/32, y/32, z/32)-y/15;
+            
+        var xd = x-w*0.25,
+            yd = y-h*0.25,
+            zd = z-d*0.25,
+            distance = Math.sqrt(xd*xd+yd*yd*yd+zd*zd)*0.05;
+            density = simplex.noise3D(x/32, y/32, z/32)-distance;
         if(density > -0.75){
             return 3;
         }

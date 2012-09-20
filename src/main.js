@@ -42,13 +42,14 @@ var loader = new Loader(),
     graph = new scene.Graph(),
     mousecontroller = new MouseController(input, null),
     debug = getHashValue('debug', '0') !== '0',
+    seed = getHashValue('seed', '0'),
     debug_element = $('#debug'),
     camera, player;
 
 var cube, cube2;
 function prepareScene(){
     window.world = new voxel.World({width: 8, height: 4, depth: 8, chunk_size: 32, scale: 0.5});
-    voxel.random_world(window.world, 'seed');
+    voxel.random_world(window.world, seed);
     //voxel.flat_world(window.world, 10);
     window.renderer = new glvoxel.Renderer(window.world);
 
@@ -120,7 +121,7 @@ function prepareScene(){
         }, [camera]);
     window.camera = camera;
     camera.position[0] = 4*32*0.5;
-    camera.position[1] = 3*32*0.5;
+    camera.position[1] = 5*32*0.5;
     camera.position[2] = 8*32*0.5;
     player = new Player(window.world);
     player.setPosition(camera.position);
@@ -157,7 +158,7 @@ clock.ontick = function (td) {
     if(input.keys.SPACE){
         player.acceleration[1] += 20;
     }
-    //player.acceleration[1] -= 10;
+    player.acceleration[1] -= 10;
 
     vec3.scale(player.velocity, 0.99);
 

@@ -13,7 +13,7 @@ uniform vec3 sunDirection;
 uniform vec3 eye;
 
 void main(){
-    float light = max(dot(vNormal, sunDirection), 0.0)*0.8*vAmbient*0.025;
+    float light = max(dot(vNormal, sunDirection), 0.0)*0.8+0.2;
     vec3 view = vPosition-eye;
     vec3 shaded = vColor*light;
     gl_FragColor = vec4(shaded, length(view));
