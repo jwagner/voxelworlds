@@ -301,9 +301,11 @@ voxel.random_world = function(world, seed) {
         if(density > -1.0){
             return y > 32+xz*4 ? 1.0 : 2;
         }
+        if(seed[0] === "6"){
         var density0 = simplex.noise3D(x/32, 32, z/32);
-            if(density0-xd*xd*0.005 > -1.0 && y > 32 && y*0.01 < simplex.noise2D(x/4, z/4)*simplex.noise2D(x/32, z/32)){
+            if(density0-xd*xd*0.002-zd*zd*0.002 > -1.0 && y > 32 && y*0.01 < simplex.noise2D(x/4, z/4)*simplex.noise2D(x/32, z/32)){
             return y > 48+xz*16 ? 5 : 4;
+        }
         }
 
         if(density > -0.50-y*0.01+simplex.noise2D(x/4, z/4)*simplex.noise2D(x/32+5, z/32+5)){
