@@ -75,6 +75,15 @@ CapsuleY.prototype.collideAABB = function(aabb) {
     return c;
 }; 
 
+function fitAABBtoGrid (aabb, scale) {
+    aabb.x0 -= aabb.x0%scale+scale;
+    aabb.y0 -= aabb.y0%scale+scale;
+    aabb.z0 -= aabb.z0%scale+scale;
+    aabb.x1 += (scale-aabb.x1%scale)+scale;
+    aabb.y1 += (scale-aabb.y1%scale)+scale;
+    aabb.z1 += (scale-aabb.z1%scale)+scale;
+}
+
 function Player(world) {
     this.shape = new CapsuleY(0, 0, 0, 1.0, 0.75);
     this.world = world;
@@ -82,6 +91,7 @@ function Player(world) {
     this.position = vec3.create();
     this.velocity = vec3.create();
     this.acceleration = vec3.create();
+    this.hadContact = false;
 }
 var auxv3 = vec3.create();
 Player.prototype.setPosition = function(pos) {
@@ -90,6 +100,13 @@ Player.prototype.setPosition = function(pos) {
 };
 Player.prototype.tick = function(td) {
     vec3.add(this.velocity, vec3.scale(this.acceleration, td, auxv3));
+    if(this.hadContact) {
+        // assume a constant normal force of .1 COF ~.5
+        var friction = 0.05,
+            speed = vec3.length(this.velocity);
+        friction = Math.min(speed, friction);
+        vec3.scale(this.velocity, 1-friction/speed);
+    }
     vec3.add(this.position, vec3.scale(this.velocity, td, auxv3));
 
     var world = this.world,
@@ -100,12 +117,7 @@ Player.prototype.tick = function(td) {
     // prepare AABB
     this.shape.setPosition(this.position[0], this.position[1], this.position[2]);
     this.shape.updateAABB(aabb);
-    this.aabb.x0 -= this.aabb.x0%scale+scale;
-    this.aabb.y0 -= this.aabb.y0%scale+scale;
-    this.aabb.z0 -= this.aabb.z0%scale+scale;
-    this.aabb.x1 += (scale-this.aabb.x1%scale)+scale;
-    this.aabb.y1 += (scale-this.aabb.y1%scale)+scale;
-    this.aabb.z1 += (scale-this.aabb.z1%scale)+scale;
+    fitAABBtoGrid(aabb, scale);
 
     var voxels = [];
     for(var x = aabb.x0; x < aabb.x1; x+=scale) {
@@ -145,6 +157,8 @@ Player.prototype.tick = function(td) {
         }
 
     }
+
+    this.hadContact = iterations > 0;
 
     this.velocity[0] += this.shape.x-this.position[0];
     this.velocity[1] += this.shape.y-this.position[1];
