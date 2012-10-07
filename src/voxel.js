@@ -307,9 +307,10 @@ voxel.random_world = function(world, seed) {
             return y > 48+xz*16 ? 5 : 4;
         }
         }
-
-        if(density > -0.50-y*0.01+simplex.noise2D(x/4, z/4)*simplex.noise2D(x/32+5, z/32+5)){
-            return 3;
+        if(seed[0] != '0'){
+            if(density > -0.50-y*0.01+simplex.noise2D(x/4, z/4)*simplex.noise2D(x/32+5, z/32+5)){
+                return 3;
+            }
         }
 
         return 0.0;
