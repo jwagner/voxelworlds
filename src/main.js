@@ -4,6 +4,7 @@ require('jquery');
 
 var Loader = require('loader').Loader,
     Clock = require('clock').Clock,
+    fixedstep = require('clock').fixedstep,
     glUtils = require('gl/utils'),
     InputHandler = require('input').Handler,
     MouseController = require('cameracontroller').MouseController,
@@ -150,22 +151,34 @@ input.onKeyDown = function(key) {
 window.cposition = vec3.create();
 window.clposition = vec3.create();
 var vel = 0.0;
-clock.ontick = function (td) {
-    mousecontroller.tick(td);
+clock.ontick = fixedstep(1/120, integrate, render);
+    
+function integrate(dt, t) {
+    mousecontroller.tick(dt);
 
-    player.acceleration = vec3.scale(vec3.subtract(camera.position, player.position, vec3.create()), 1.0/td);
+    player.acceleration = vec3.scale(vec3.subtract(camera.position, player.position, vec3.create()), 1.0/dt);
 
     if(input.keys.SPACE){
-        player.acceleration[1] += 20;
+        player.acceleration[1] = 5;
     }
-    player.acceleration[1] -= 10;
+    else {
+        player.acceleration[1] = -10;
+    }
 
     vec3.scale(player.velocity, 0.99);
 
-    player.tick(td*0.5);
-    player.tick(td*0.5);
+    player.tick(dt);
     vec3.set(player.position, camera.position);
 
+    //debug_element.html('<h4>ray</h4>' +
+                       //(hit ? 'hit' : 'miss') +
+                       //'<br>' + Array.prototype.slice.call(ray).join(',') +
+                       //'<br>' + Array.prototype.slice.call(window.cposition).join(',') +
+                       //'<br>' + Array.prototype.slice.call(window.clposition).join(',') +
+                       //'<br>' + voxel
+                      //);
+}
+function render(dt, t){
     var ray = window.camera.getRay(),
         scale = window.world.scale;
     window.ray = ray;
@@ -174,7 +187,6 @@ clock.ontick = function (td) {
         voxel = window.world.voxel(window.cposition);
 
     if(hit){
-        //debugger;
         mat4.identity(cube.matrix);
         mat4.translate(cube.matrix, vec3.add(window.clposition, [0.25, 0.25, 0.25]));
         mat4.scale(cube.matrix, vec3.create([0.5, 0.5, 0.5]));
@@ -187,15 +199,9 @@ clock.ontick = function (td) {
             window.world.voxel(window.clposition, 3);
         }
     }
-    //debug_element.html('<h4>ray</h4>' +
-                       //(hit ? 'hit' : 'miss') +
-                       //'<br>' + Array.prototype.slice.call(ray).join(',') +
-                       //'<br>' + Array.prototype.slice.call(window.cposition).join(',') +
-                       //'<br>' + Array.prototype.slice.call(window.clposition).join(',') +
-                       //'<br>' + voxel
-                      //);
+
     graph.draw();
-};
+}
 
 window.URL = window.URL || window.webkitURL;
 

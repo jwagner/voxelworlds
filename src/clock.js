@@ -9,18 +9,18 @@ clock.Clock = function () {
     this.interval = null;
     this.t0 = this.now();
     this.t = 0.0;
-    this.maxtd = 0.25;
+    this.maxdt = 0.25;
 };
 clock.Clock.prototype = {
     tick: function () {
         var t1 = this.now(),
-            td = (t1-this.t0)/1000;
+            dt = (t1-this.t0)/1000;
         this.t0 = t1;
-        this.t += td;
+        this.t += dt;
         // don't tick on frame breaks
         // don't do zero or negative ticks
-        if(td < this.maxtd && td > 0){
-            this.ontick(td);
+        if(dt < this.maxdt && dt > 0){
+            this.ontick(dt);
         }
     },
     start: function (element) {
@@ -49,9 +49,26 @@ clock.Clock.prototype = {
         this.running = false;
     },
     now: function(){
+        //return new Date();
         return window.performance.now();
     }, 
-    ontick: function() {}
+    ontick: function(dt){
+    }
+};
+
+clock.fixedstep = function(step, integrate, render){
+    var accumulated = 0,
+        t = 0;
+    return function(dt){
+        accumulated += dt;
+        while(accumulated >= step){
+            integrate(step, t);
+            accumulated -= step;
+            dt -= step;
+            t += step;
+        }
+        render(dt, t);
+    }
 };
 
 });
