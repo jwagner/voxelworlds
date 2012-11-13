@@ -19,7 +19,7 @@ voxel.Renderer.prototype = {
             position = shader.getAttribLocation('position'),
             normal = shader.getAttribLocation('normal'),
             color = shader.getAttribLocation('color'),
-            ambient = shader.getAttribLocation('ambient'),
+            //ambient = shader.getAttribLocation('ambient'),
             update = true;
 
         graph.pushUniforms();
@@ -58,8 +58,8 @@ voxel.Renderer.prototype = {
             gl.vertexAttribPointer(normal, 3, gl.BYTE, false, stride, 3);
             gl.enableVertexAttribArray(color);
             gl.vertexAttribPointer(color, 3, gl.UNSIGNED_BYTE, false, stride, 6);
-            gl.enableVertexAttribArray(ambient);
-            gl.vertexAttribPointer(ambient, 1, gl.UNSIGNED_BYTE, false, stride, 9);
+            //gl.enableVertexAttribArray(ambient);
+            //gl.vertexAttribPointer(ambient, 1, gl.UNSIGNED_BYTE, false, stride, 9);
             gl.drawArrays(gl.TRIANGLES, 0, vbo.length/stride);
             vbo.unbind();
             // render chunk

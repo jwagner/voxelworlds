@@ -44,6 +44,7 @@ var loader = new Loader(),
     mousecontroller = new MouseController(input, null),
     debug = getHashValue('debug', '0') !== '0',
     seed = getHashValue('seed', '0'),
+    nogravity = getHashValue('nogravity', '0' !== '0'),
     debug_element = $('#debug'),
     camera, player;
 
@@ -164,6 +165,8 @@ function integrate(dt, t) {
     else {
         player.acceleration[1] = -10;
     }
+    if(!nogravity)
+        player.acceleration[1] -= 10;
 
     vec3.scale(player.velocity, 0.99);
 
@@ -206,13 +209,19 @@ function render(dt, t){
 window.URL = window.URL || window.webkitURL;
 
 if(glUtils.getContext(canvas, {}, {debug: debug, texture_float: true}) == null){
-    //return;
+    $('#loading').hide();
+    $('#video').show('slow');
 }
 
 loader.onready = function() {
-    console.log('ready');
-    prepareScene();
-    clock.start(canvas);
+    $('#loading .status').text('generating world');
+    window.setTimeout(function () {
+        prepareScene();
+        $(canvas).show('slow', function(){
+            clock.start(canvas);
+            glUtils.fullscreen(canvas, graph, $('#cc')[0]);
+        });
+    }, 1);
 };
 
 loader.load(RESOURCES);

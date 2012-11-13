@@ -68,7 +68,7 @@ clock.fixedstep = function(step, integrate, render){
             t += step;
         }
         render(dt, t);
-    }
+    };
 };
 
 });

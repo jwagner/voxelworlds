@@ -172,6 +172,22 @@ glUtils.getContext = function (canvas, context_options, options) {
     return window.gl;
 };
 
+glUtils.fullscreen = function (canvas, scene, parent) {
+    function onresize() {
+        var height = $(parent || canvas).height(),
+            width = $(parent || canvas).width();
+        if(canvas.width != width){
+            canvas.width = scene.viewportWidth = width;
+        }
+        if(canvas.height != height){
+            canvas.height = scene.viewportHeight = height;
+        }
+        scene.draw();
+    }
+    window.addEventListener('resize', onresize, false);
+    onresize();
+};
+
 glUtils.onerror = function(){
 };
 
