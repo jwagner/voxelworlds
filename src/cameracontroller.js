@@ -4,7 +4,6 @@ var cameracontroller = exports,
     clamp = require('utils').clamp;
 
 
-
 cameracontroller.MouseController = function MouseController(input, camera) {
     this.input = input;
     this.camera = camera;

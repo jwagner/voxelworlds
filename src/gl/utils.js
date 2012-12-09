@@ -172,20 +172,32 @@ glUtils.getContext = function (canvas, context_options, options) {
     return window.gl;
 };
 
-glUtils.fullscreen = function (canvas, scene, parent) {
-    function onresize() {
-        var height = $(parent || canvas).height(),
-            width = $(parent || canvas).width();
+glUtils.fullscreen = function (canvas, scene, parent, onresize) {
+    function resize() {
+        var $element = $(document.fullscreenElement == canvas && canvas || parent || canvas),
+            height = $element.height(),
+            width = $element.width(),
+            update = false;
         if(canvas.width != width){
             canvas.width = scene.viewportWidth = width;
+            update = true;
         }
         if(canvas.height != height){
             canvas.height = scene.viewportHeight = height;
+            update = true;
         }
+        if(!update) return;
+        if(onresize) onresize(width, height);
         scene.draw();
     }
-    window.addEventListener('resize', onresize, false);
-    onresize();
+    var t;
+    function throttledResize(){
+        window.clearTimeout(t);
+        t = window.setTimeout(resize, 500);
+    }
+    window.addEventListener('resize', throttledResize, false);
+    canvas.ownerDocument.addEventListener('fullscreenchange', throttledResize, false);
+    resize();
 };
 
 glUtils.onerror = function(){

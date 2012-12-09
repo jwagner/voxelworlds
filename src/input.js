@@ -69,7 +69,7 @@ input.Handler.prototype = {
         });
         */
         document.onmousemove = function(e) {
-            self.mouseMove(e.pageX, e.pageY);
+            self.mouseMove(e.pageX, e.pageY, e.movementX, e.movementY);
         };
         $(element).mousedown(function(e){
             self.mouseDown();
@@ -126,7 +126,7 @@ input.Handler.prototype = {
             this.onClick(this.mouse.x, this.mouse.y);
         }
     },
-    mouseMove: function(x, y){
+    mouseMove: function(x, y, movementX, movementY){
         this.mouse.x = clamp(x-this.offset.x, 0, this.width);
         this.mouse.y = clamp(y-this.offset.y, 0, this.height);
     },

@@ -74,9 +74,8 @@ html, body{
     padding: 0 8px;
 }
 
-.ghost, .fullscreen, .wireframe, .hq.active, .lq.active {
+.fullscreen, .generate-world, .show-controls  {
     cursor: pointer;
-    text-decoration: underline;
 }
 
 #footer {
@@ -127,4 +126,36 @@ html, body{
     top: 82px;
     right: 0px;
     background-color: black;
+}
+
+canvas:-webkit-full-screen {
+    width: 100% !important;
+    height: 100% !important;
+}
+canvas:-moz-full-screen {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+#controls {
+    position: absolute;
+    left: 50%;
+    padding: 8px;
+    margin-left: -256px;
+    width: 512px;
+    z-index:2;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.2);
+    border: 2px solid rgba(0, 0, 0, 0.6);
+    font-size: 14px;
+}
+.key {
+    border-radius: 4px;
+    min-width: 24px;
+    display: inline-block;
+    text-align: center;
+    padding: 2px;
+    color: #333;
+    background-color: #fff;
 }

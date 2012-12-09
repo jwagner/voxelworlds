@@ -9,44 +9,67 @@
     <body style="height: 100%; width: 100%">
         <div id="header">
             <h1><a href="http://29a.ch/">29a.ch</a></h1>
-            <p><a href="http://29a.ch/2012/7/19/webgl-terrain-rendering-water-fog">More about this experiment</a></p>&nbsp;&nbsp;&nbsp;
+            <p><a href="http://29a.ch/2012/12/9/webgl-voxel-worlds">More about this experiment</a></p>&nbsp;&nbsp;&nbsp;
             <p><a href="http://29a.ch/experiments/">More Experiments &amp; Toys</a></p>
             <div id="social">
                 <a href="http://twitter.com/share" class="twitter-share-button"
-                    data-url="http://29a.ch/sandbox/2012/terrain/"
-                    data-text="WebGL terrain rendering experiment showing the island of maui."
+                    data-url="http://29a.ch/sandbox/2012/voxelworld/"
+                    data-text="WebGL Voxel Worlds experiment"
                     data-count="horizontal" data-via="29a_ch">Tweet</a>
                 <iframe
-                    src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2F29a.ch%2Fsandbox%2F2012%2Fterrain%2F&amp;layout=button_count&amp;show_faces=true&amp;width=450&amp;action=like&amp;font&amp;colorscheme=light&amp;height=21"
+                    src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2F29a.ch%2Fsandbox%2F2012%2Fvoxelworld%2F&amp;layout=button_count&amp;show_faces=true&amp;width=450&amp;action=like&amp;font&amp;colorscheme=light&amp;height=21"
                     scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:90px;height:20px;" allowTransparency="true"></iframe>
                 <div class="g-plusone" data-size="medium"
-                    data-href="http://29a.ch/sandbox/2012/terrain/" data-count="true"></div>
+                    data-href="http://29a.ch/sandbox/2012/voxelworld/" data-count="true"></div>
             </div> 
         </div> 
         <div id="menu">
-            <!--<span class=fullscreen>Fullscreen</span>-->
-            <!--<span class=wireframe>Toggle Wireframe</span>-->
-            <!--<span class=ghost>Toggle Ghost Mode</span>-->
-            <!--<span>-->
-                <!--<span class="hq">High LOD</span>-->
-                <!--|-->
-                <!--<span class="lq active">Low LOD</span>-->
-                <!--</span>-->
+            <span class=fullscreen>Fullscreen</span>
+            <span class=generate-world data-prefix=0>Generate Smooth World</span>
+            <span class=generate-world data-prefix=1>Generate Rocky World</span>
+            <span class=generate-world data-prefix=6>Generate Spikey World</span>
+            <span class=show-controls>Show Controls</span>
         </div>
         <div id="loading">
             <p class="status">loading ...</p>
         </div>
         <div id="debug"></div>
+        <div id=controls style=display:none>
+            <h1>Controls</h1>
+            <p>Look:<br>
+            Click and Drag
+            </p>
+            <p>Movement:<br>
+            <span class=key>W</span>
+            <span class=key>A</span>
+            <span class=key>S</span>
+            <span class=key>D</span> or 
+            <span class=key>&#9664;</span>
+            <span class=key>&#9650;</span>
+            <span class=key>&#9660;</span>
+            <span class=key>&#9654;</span>
+            </p>
+            <p>
+            Remove Voxel:</br>
+            <span class=key>Q</span>
+            </p>
+            <p>
+            Add Voxel:</br>
+            <span class=key>E</span>, Right Click
+            </p>
+            <p>
+            Jet Pack:</br>
+            <span class=key>Space</span>
+        </div>
         <div id="cc">
             <canvas id=c width=1280 height=720></canvas>
         </div>
         <div id="video">
-            <iframe data-src="http://player.vimeo.com/video/46319690" width="1280" height="720" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            <iframe width="1280" height="720" data-src="http://www.youtube-nocookie.com/embed/W99QeBI_QBo" frameborder="0" allowfullscreen></iframe>
         </div>
         <div id="footer">
             An experiment by <a href="https://plus.google.com/107896782168573495211?rel=author" rel="author">Jonas Wagner</a></p>
         </div>
-        <script src=../lib/game-shim.js></script>
         <script src=../node_modules/requirejs/require.js></script>
         <script src=main.js></script>
 

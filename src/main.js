@@ -1,6 +1,7 @@
 define(function(require, exports){
 
 require('jquery');
+require('game-shim');
 
 var Loader = require('loader').Loader,
     Clock = require('clock').Clock,
@@ -48,18 +49,29 @@ var loader = new Loader(),
     debug_element = $('#debug'),
     camera, player;
 
-var cube, cube2;
+var cube, cube2, resizeVBO;
 function prepareScene(){
+    canvas.style.display = 'block';
+
     window.world = new voxel.World({width: 8, height: 4, depth: 8, chunk_size: 32, scale: 0.5});
     voxel.random_world(window.world, seed);
     //voxel.flat_world(window.world, 10);
     window.renderer = new glvoxel.Renderer(window.world);
 
     var albedoFBO = new FBO(canvas.width, canvas.height, gl.FLOAT),
-        blurFBO0 = new FBO(canvas.width, canvas.height, gl.FLOAT),
-        blurFBO1 = new FBO(canvas.width, canvas.height, gl.FLOAT),
+        blurFBO0 = new FBO(canvas.width>>1, canvas.height>>1, gl.FLOAT),
+        blurFBO1 = new FBO(canvas.width>>1, canvas.height>>1, gl.FLOAT),
         blurFBO2 = new FBO(canvas.width>>2, canvas.height>>2, gl.FLOAT),
         blurFBO3 = new FBO(canvas.width>>2, canvas.height>>2, gl.FLOAT);
+
+    resizeVBO = function() {
+        // hoping the GC will clean up...
+        FBO.call(albedoFBO, canvas.width, canvas.height, gl.FLOAT);
+        FBO.call(blurFBO0, canvas.width>>1, canvas.height>>1, gl.FLOAT);
+        FBO.call(blurFBO1, canvas.width>>1, canvas.height>>1, gl.FLOAT);
+        FBO.call(blurFBO2, canvas.width>>2, canvas.height>>2, gl.FLOAT);
+        FBO.call(blurFBO3, canvas.width>>2, canvas.height>>2, gl.FLOAT);
+    }; 
 
     cube = new scene.Transform([
         new scene.Material(shaders.get('solid'), {color: vec4.create([0.5, 0.0, 0.0, 0.5])}, [
@@ -85,7 +97,7 @@ function prepareScene(){
             new scene.Postprocess(shaders.get('blur.vertex', 'blur.frag'), {
                 texture: albedoFBO,
                 direction: vec2.create([1, 0]),
-                size: vec2.create([albedoFBO.width, albedoFBO.height])
+                size: vec2.create([blurFBO0.width, blurFBO0.height])
             })
         ]),
         new scene.RenderTarget(blurFBO1, [
@@ -124,7 +136,7 @@ function prepareScene(){
     window.camera = camera;
     camera.position[0] = 4*32*0.5;
     camera.position[1] = 5*32*0.5;
-    camera.position[2] = 8*32*0.5;
+    camera.position[2] = 5*32*0.5;
     player = new Player(window.world);
     player.setPosition(camera.position);
     camera.pitch = Math.PI*0.25;
@@ -160,10 +172,10 @@ function integrate(dt, t) {
     player.acceleration = vec3.scale(vec3.subtract(camera.position, player.position, vec3.create()), 1.0/dt);
 
     if(input.keys.SPACE){
-        player.acceleration[1] = 5;
+        player.acceleration[1] = 15;
     }
     else {
-        player.acceleration[1] = -10;
+        player.acceleration[1] = 0;
     }
     if(!nogravity)
         player.acceleration[1] -= 10;
@@ -172,14 +184,6 @@ function integrate(dt, t) {
 
     player.tick(dt);
     vec3.set(player.position, camera.position);
-
-    //debug_element.html('<h4>ray</h4>' +
-                       //(hit ? 'hit' : 'miss') +
-                       //'<br>' + Array.prototype.slice.call(ray).join(',') +
-                       //'<br>' + Array.prototype.slice.call(window.cposition).join(',') +
-                       //'<br>' + Array.prototype.slice.call(window.clposition).join(',') +
-                       //'<br>' + voxel
-                      //);
 }
 function render(dt, t){
     var ray = window.camera.getRay(),
@@ -208,21 +212,69 @@ function render(dt, t){
 
 window.URL = window.URL || window.webkitURL;
 
-if(glUtils.getContext(canvas, {}, {debug: debug, texture_float: true}) == null){
+glUtils.onerror = function(el, msg, id){
+    alert(msg);
     $('#loading').hide();
+    var f = $('#video iframe');
+    f.attr('src', f.data('src'));
     $('#video').show('slow');
-}
+};
+
+glUtils.getContext(canvas, {}, {debug: debug, texture_float: true});
 
 loader.onready = function() {
     $('#loading .status').text('generating world');
     window.setTimeout(function () {
         prepareScene();
         $(canvas).show('slow', function(){
+            showControls();
             clock.start(canvas);
-            glUtils.fullscreen(canvas, graph, $('#cc')[0]);
+            glUtils.fullscreen(canvas, graph, $('#cc')[0], function(){
+                resizeVBO();
+            });
         });
     }, 1);
 };
+
+function showControls(){
+    $('#controls').fadeIn('slow');
+    $(document).one('mousedown', function() {
+        $('#controls').fadeOut(500);
+    }); 
+}
+$('.show-controls').click(showControls);
+
+$('.generate-world').click(function() {
+    var seed = $(this).data('prefix') + 'x' + ~~(Math.random()*10000000);
+    location.hash = 'seed=' + seed;
+    voxel.random_world(window.world, seed);
+    camera.position[0] = 4*32*0.5;
+    camera.position[1] = 5*32*0.5;
+    camera.position[2] = 5*32*0.5;
+    camera.pitch = Math.PI*0.25;
+    camera.yaw = 0.0;
+    player.setPosition(camera.position);
+    vec3.scale(player.velocity, 0.0);
+}); 
+$('.fullscreen').click(function() {
+    canvas.requestFullscreen();
+});
+$(canvas).mousedown(function(e){
+    if(e.which === 3) {
+        add_block = true;
+        e.preventDefault();
+    }
+});
+$(canvas).on('contextmenu', function(e){
+    return false;
+});
+
+if(!document.fullscreenEnabled){
+    $('.fullscreen').hide();
+}
+$(canvas).on('fullscreenerror', function () {
+    alert('failed to enable fullscreen');
+});
 
 loader.load(RESOURCES);
 

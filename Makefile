@@ -5,6 +5,7 @@ init:
 	npm install --dev
 
 min:
+	sed '/require\.js/d' public/index.html > build/public/index.html
 	cd build;../node_modules/.bin/r.js -o build.js;
 	echo "(function(){" > build/min/main.js
 	cat lib/almond.min.js build/min/src/main.js >> build/min/main.js
