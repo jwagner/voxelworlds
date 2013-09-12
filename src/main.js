@@ -225,6 +225,7 @@ glUtils.getContext(canvas, {}, {debug: debug, texture_float: true});
 loader.onready = function() {
     $('#loading .status').text('generating world');
     window.setTimeout(function () {
+        gl.getExtension('OES_texture_float_linear');
         prepareScene();
         $(canvas).show('slow', function(){
             showControls();
