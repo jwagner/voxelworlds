@@ -1,6 +1,6 @@
 attribute vec3 position;
 attribute vec3 normal;
-attribute float ambient;
+/*attribute float ambient;*/
 attribute vec3 color;
 
 uniform mat4 modelTransform;
@@ -11,14 +11,14 @@ uniform float scale;
 varying vec3 vPosition;
 varying vec3 vColor;
 varying vec3 vNormal;
-varying float vAmbient;
+/*varying float vAmbient;*/
 
 
 void main(){
     vec4 worldPosition4 = vec4(position*scale+offset, 1.0);
     vColor = color/255.0;
     vNormal = normal;
-    vAmbient = ambient;
+    /*vAmbient = ambient;*/
     vPosition = worldPosition4.xyz;
     gl_Position = worldViewProjection*worldPosition4;
 }

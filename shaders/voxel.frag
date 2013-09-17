@@ -7,7 +7,7 @@ precision mediump float;
 varying vec3 vPosition;
 varying vec3 vColor;
 varying vec3 vNormal;
-varying float vAmbient;
+/*varying float vAmbient;*/
 
 uniform vec3 sunDirection;
 uniform vec3 eye;
