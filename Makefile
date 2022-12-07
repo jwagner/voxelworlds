@@ -12,6 +12,6 @@ min:
 	echo ";require('main');})()" >> build/min/main.js
 
 sync:
-	rsync -vrt --copy-links --exclude release.sh build/min/* 29a.ch:/var/www/29a.ch/sandbox/2012/voxelworld/
+	rsync -vrt --copy-links --exclude release.sh build/min/* x.29a.ch:/var/www/29a.ch/sandbox/2012/voxelworld/
 
 release: min sync

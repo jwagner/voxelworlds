@@ -1,91 +1,67 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Voxel World WebGL</title>
-        <link href='//fonts.googleapis.com/css?family=Michroma'
-        rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="style.css" />
-    </head>
-    <body style="height: 100%; width: 100%">
-        <div id="header">
-            <h1><a href="//29a.ch/">29a.ch</a></h1>
-            <p><a href="//29a.ch/2012/12/9/webgl-voxel-worlds">More about this experiment</a></p>&nbsp;&nbsp;&nbsp;
-            <p><a href="//29a.ch/experiments/">More Experiments &amp; Toys</a></p>
-            <div id="social">
-                <a href="https://twitter.com/share" class="twitter-share-button"
-                    data-url="http://29a.ch/sandbox/2012/voxelworld/"
-                    data-text="WebGL Voxel Worlds experiment"
-                    data-count="horizontal" data-via="29a_ch">Tweet</a>
-                <iframe
-                    src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2F29a.ch%2Fsandbox%2F2012%2Fvoxelworld%2F&amp;layout=button_count&amp;show_faces=true&amp;width=450&amp;action=like&amp;font&amp;colorscheme=light&amp;height=21"
-                    scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:90px;height:20px;" allowTransparency="true"></iframe>
-                <div class="g-plusone" data-size="medium"
-                    data-href="http://29a.ch/sandbox/2012/voxelworld/" data-count="true"></div>
-            </div> 
-        </div> 
-        <div id="menu">
-            <span class=fullscreen>Fullscreen</span>
-            <span class=generate-world data-prefix=0>Generate Smooth World</span>
-            <span class=generate-world data-prefix=1>Generate Rocky World</span>
-            <span class=generate-world data-prefix=6>Generate Spikey World</span>
-            <span class=show-controls>Show Controls</span>
-        </div>
-        <div id="loading">
-            <p class="status">loading ...</p>
-        </div>
-        <div id="debug"></div>
-        <div id=controls style=display:none>
-            <h1>Controls</h1>
-            <p>Look:<br>
+
+<head>
+    <title>Voxel World WebGL</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body style="height: 100%; width: 100%">
+    <div id="header">
+        <h1><a href="//29a.ch/">29a.ch</a></h1>
+        <p><a href="//29a.ch/2012/12/9/webgl-voxel-worlds">More about this experiment</a></p>&nbsp;&nbsp;&nbsp;
+        <p><a href="//29a.ch/experiments/">More Experiments &amp; Toys</a></p>
+    </div>
+    <div id="menu">
+        <span class=fullscreen>Fullscreen</span>
+        <span class=generate-world data-prefix=0>Generate Smooth World</span>
+        <span class=generate-world data-prefix=1>Generate Rocky World</span>
+        <span class=generate-world data-prefix=6>Generate Spikey World</span>
+        <span class=show-controls>Show Controls</span>
+    </div>
+    <div id="loading">
+        <p class="status">loading ...</p>
+    </div>
+    <div id="debug"></div>
+    <div id=controls style=display:none>
+        <h1>Controls</h1>
+        <p>Look:<br>
             Click and Drag
-            </p>
-            <p>Movement:<br>
+        </p>
+        <p>Movement:<br>
             <span class=key>W</span>
             <span class=key>A</span>
             <span class=key>S</span>
-            <span class=key>D</span> or 
+            <span class=key>D</span> or
             <span class=key>&#9664;</span>
             <span class=key>&#9650;</span>
             <span class=key>&#9660;</span>
             <span class=key>&#9654;</span>
-            </p>
-            <p>
+        </p>
+        <p>
             Remove Voxel:</br>
             <span class=key>Q</span>
-            </p>
-            <p>
+        </p>
+        <p>
             Add Voxel:</br>
             <span class=key>E</span>, Right Click
-            </p>
-            <p>
+        </p>
+        <p>
             Jet Pack:</br>
             <span class=key>Space</span>
-        </div>
-        <div id="cc">
-            <canvas id=c width=1280 height=720></canvas>
-        </div>
-        <div id="video">
-            <iframe width="1280" height="720" data-src="http://www.youtube-nocookie.com/embed/W99QeBI_QBo" frameborder="0" allowfullscreen></iframe>
-        </div>
-        <div id="footer">
-            An experiment by <a href="https://plus.google.com/107896782168573495211?rel=author" rel="author">Jonas Wagner</a></p>
-        </div>
-        <script src=main.js></script>
+    </div>
+    <div id="cc">
+        <canvas id=c width=1280 height=720></canvas>
+    </div>
+    <div id="video">
+        <a href="https://www.youtube.com/watch?v=W99QeBI_QBo">Watch a video of this on youtube</a>
+    </div>
+    <div id="footer">
+        An experiment by <a href="https://29a.ch/" rel="author">Jonas Wagner</a></p>
+    </div>
+    <script src=main.js></script>
+    <script src=/a.js async></script>
 
-        <script type="text/javascript" src="//platform.twitter.com/widgets.js" async defer></script>
-        <script type="text/javascript" src="https://apis.google.com/js/plusone.js" async defer></script>
-        <script type="text/javascript">
+</body>
 
-            var _gaq = _gaq || [];
-            _gaq.push(['_setAccount', 'UA-5205069-2']);
-            _gaq.push(['_trackPageview']);
-
-            (function() {
-             var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-             ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-             })();
-
-         </script>
-     </body>
- </html>
+</html>
